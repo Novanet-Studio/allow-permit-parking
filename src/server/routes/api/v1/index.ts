@@ -1,3 +1,4 @@
+import User from '../../../models/user';
 import type {
   FastifyError,
   FastifyInstance,
@@ -11,15 +12,6 @@ export default function (
   _: FastifyRegisterOptions<unknown>,
   done: (err?: FastifyError) => void,
 ): void {
-  const userSchema = new fastify.mongoose.Schema({
-    name: String,
-    lastname: String,
-    email: String,
-    password: String,
-  });
-
-  const user = fastify.mongoose.model('User', userSchema);
-
   fastify.get('/', (request: FastifyRequest, reply: FastifyReply) => {
     reply.send({
       message: 'This is an API Route!',
@@ -31,7 +23,7 @@ export default function (
   fastify.get(
     '/users',
     async (request: FastifyRequest, reply: FastifyReply) => {
-      return { message: await user.find() };
+      return { message: await User.find() };
     },
   );
 
