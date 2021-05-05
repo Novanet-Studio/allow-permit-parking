@@ -36,6 +36,7 @@
     "next": "^10.2.0",
     "pino-pretty": "^4.7.1",
     "react": "^17.0.1",
-    "react-dom": "^17.0.1"
+    "react-dom": "^17.0.1",
+    "ts-node-dev": "^1.1.6"
   }
 }
