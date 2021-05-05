@@ -9,6 +9,6 @@
     "sourceMap": true,
     "removeComments": true
   },
-  "include": ["src/main.ts", "src/server/**/*.ts"],
+  "include": ["src/main.ts", "src/server/**/*.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules", "src/client"]
 }

@@ -11,6 +11,15 @@ export default function (
   _: FastifyRegisterOptions<unknown>,
   done: (err?: FastifyError) => void,
 ): void {
+  const userSchema = new fastify.mongoose.Schema({
+    name: String,
+    lastname: String,
+    email: String,
+    password: String,
+  });
+
+  const user = fastify.mongoose.model('User', userSchema);
+
   fastify.get('/', (request: FastifyRequest, reply: FastifyReply) => {
     reply.send({
       message: 'This is an API Route!',
@@ -18,6 +27,13 @@ export default function (
         'Every request to api/v1 will be handled by Fastify without using the NextJS plugin',
     });
   });
+
+  fastify.get(
+    '/users',
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      return { message: await user.find() };
+    },
+  );
 
   done();
 }

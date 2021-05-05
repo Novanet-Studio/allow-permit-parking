@@ -3,14 +3,14 @@ import mongo from 'mongoose';
 import type { FastifyInstance } from 'fastify';
 import type { PluginOptions } from 'fastify-plugin';
 
-async function mongoose(
+async function mongoModel(
   fastify: FastifyInstance,
   _: PluginOptions,
   next: (err?: Error) => void,
 ) {
   fastify.decorate(
     'mongoose',
-    await mongo.connect('mongodb://localhost:27017/fastify-parking', {
+    mongo.connect('mongodb://localhost:27017/fastify-parking', {
       useCreateIndex: true,
       useFindAndModify: true,
       useNewUrlParser: true,
@@ -21,7 +21,7 @@ async function mongoose(
   next();
 }
 
-export default fp(mongoose, {
+export default fp(mongoModel, {
   fastify: '3.x',
-  name: 'mongoose-fastify-plugin',
+  name: 'mongoose-model-fastify-plugin',
 });
