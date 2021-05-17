@@ -73,5 +73,33 @@ export default function (
     },
   );
 
+  fastify.delete(
+    '/:id',
+    async (
+      request: FastifyRequest<{
+        Params: {
+          id: string;
+        };
+      }>,
+      reply: FastifyReply,
+    ) => {
+      try {
+        await fastify.services.parkingLot.remove(request.params.id);
+
+        return 'Parking Lot removed!';
+      } catch (error) {
+        if (error instanceof ParkingLotNotFound) {
+          return httpResponse.badRequestMessage(
+            reply,
+            'Parking Lot not found',
+            error,
+          );
+        }
+
+        return httpResponse.internalServerError(reply, error);
+      }
+    },
+  );
+
   done();
 }

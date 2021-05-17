@@ -1,7 +1,7 @@
 import ParkingLotModel from '../models/parking-lot';
+import { ParkingLotNotFound } from '../error/parking-lot.service';
 
 import type { ParkingLot } from '../models/parking-lot';
-import { ParkingLotNotFound } from '../error/parking-lot.service';
 
 export type CreateParkingLotDTO = {
   name: string;
@@ -15,6 +15,7 @@ export type UpdateParkingLotDTO = {
 export interface IParkingLotService {
   create(dto: CreateParkingLotDTO): Promise<ParkingLot>;
   update(dto: UpdateParkingLotDTO): Promise<void>;
+  remove(id: string): Promise<void>;
 }
 
 export default class ParkingLotService implements IParkingLotService {
@@ -34,6 +35,18 @@ export default class ParkingLotService implements IParkingLotService {
     }
 
     await parkingLot.update(dto);
+
+    return;
+  }
+
+  async remove(id: string): Promise<void> {
+    const parkingLot = await ParkingLotModel.findById(id);
+
+    if (!parkingLot) {
+      throw new ParkingLotNotFound('id', id);
+    }
+
+    await parkingLot.remove();
 
     return;
   }
