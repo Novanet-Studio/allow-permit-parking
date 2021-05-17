@@ -10,4 +10,8 @@ declare namespace Thruway {
     lastName: string;
     email: string;
   }
+
+  interface ParkingLot {
+    name: string;
+  }
 }
