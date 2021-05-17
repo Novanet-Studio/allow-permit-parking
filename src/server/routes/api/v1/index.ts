@@ -6,6 +6,7 @@ import type {
   FastifyInstance,
   FastifyRegisterOptions,
 } from 'fastify';
+import parkingLot from './parking-lot';
 
 export default function (
   fastify: FastifyInstance,
@@ -26,6 +27,10 @@ export default function (
 
   fastify.register(users, {
     prefix: 'users',
+  });
+
+  fastify.register(parkingLot, {
+    prefix: 'parking',
   });
 
   done();

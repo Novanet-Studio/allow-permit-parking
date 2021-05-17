@@ -25,6 +25,6 @@ ParkingLotSchema.methods.toJSON = function (): Thruway.ParkingLot {
   };
 };
 
-const ParkingLotModel = model<ParkingLot>('User', ParkingLotSchema);
+const ParkingLotModel = model<ParkingLot>('ParkingLot', ParkingLotSchema);
 
 export default ParkingLotModel;
