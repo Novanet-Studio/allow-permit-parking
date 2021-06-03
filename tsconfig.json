@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "outDir": "dist",
+    "target": "ES2017",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "removeComments": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "typeRoots": ["node_modules/@types", "src/server/@types"]
+  },
+  "include": ["src/main.ts", "src/server/**/*.ts"],
+  "exclude": ["node_modules", "src/client"]
+}

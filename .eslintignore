@@ -1,0 +1,5 @@
+.next/
+dist/
+*.js
+*.jsx
+migration/
