@@ -1,6 +1,6 @@
 import { Role } from '../server/models/user';
 
-declare namespace Thruway {
+declare namespace ESW {
   interface JwtToken {
     email: string;
     iat: number;
@@ -13,6 +13,21 @@ declare namespace Thruway {
     role: Role;
     createdAt: Date;
     updateAt: Date;
+  }
+
+  interface Residence {
+    id: string;
+    name: string;
+    createdAt: Date;
+    updatedAt: Date;
+  }
+
+  interface Building {
+    id: string;
+    name: string;
+    residenceId: string;
+    createdAt: Date;
+    updatedAt: Date;
   }
   interface ParkingLot {
     id: string;

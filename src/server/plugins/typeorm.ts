@@ -2,6 +2,8 @@ import fp from 'fastify-plugin';
 import { createConnection } from 'typeorm';
 
 import User from '../models/user';
+import Residence from '../models/residence';
+import Building from '../models/building';
 import ParkingLot from '../models/parking-lot';
 import ParkingSlot from '../models/parking-slot';
 import Driver from '../models/driver';
@@ -19,9 +21,9 @@ export default fp(
       const {
         PGHOST = '127.0.0.1',
         PGPORT = 5432,
-        POSTGRES_DB = 'thruway',
-        POSTGRES_USER = 'thruway',
-        POSTGRES_PASSWORD = 'thruway',
+        POSTGRES_DB = 'esw',
+        POSTGRES_USER = 'esw',
+        POSTGRES_PASSWORD = 'esw',
       } = process.env;
 
       const connection = await createConnection({
@@ -31,7 +33,15 @@ export default fp(
         username: POSTGRES_USER,
         password: POSTGRES_PASSWORD,
         database: POSTGRES_DB,
-        entities: [User, ParkingLot, ParkingSlot, Driver, Vehicle],
+        entities: [
+          User,
+          Residence,
+          Building,
+          ParkingLot,
+          ParkingSlot,
+          Driver,
+          Vehicle,
+        ],
       });
 
       fastify.decorate('typeorm', connection);

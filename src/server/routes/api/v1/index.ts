@@ -1,5 +1,7 @@
 import me from './me';
 import users from './users';
+import residence from './residence';
+import building from './building';
 import parkingLot from './parking-lot';
 import parkingSlot from './parking-slot';
 import driver from './driver';
@@ -30,6 +32,14 @@ export default function (
 
   fastify.register(users, {
     prefix: 'users',
+  });
+
+  fastify.register(residence, {
+    prefix: 'residence',
+  });
+
+  fastify.register(building, {
+    prefix: 'building',
   });
 
   fastify.register(parkingLot, {

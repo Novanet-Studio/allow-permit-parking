@@ -8,7 +8,7 @@ import {
 import { ExpiredTokenProvidedForRefresh } from '../error/auth.service';
 
 import type { SignOptions } from 'jsonwebtoken';
-import type { Thruway } from '../../@types/thruway';
+import type { ESW } from '../../@types/esw';
 import type { Credentials } from '../utils/basic-auth';
 import type { Role } from '../models/user';
 import type { IUserService } from './user';
@@ -129,10 +129,7 @@ export default class AuthService implements IAuthService {
   }
 
   async terminateSession(token: string): Promise<void> {
-    const claims = jsonwebtoken.verify(
-      token,
-      this.privateKey,
-    ) as Thruway.JwtToken;
+    const claims = jsonwebtoken.verify(token, this.privateKey) as ESW.JwtToken;
     await this.userService.clearRefreshToken(claims.email);
   }
 }

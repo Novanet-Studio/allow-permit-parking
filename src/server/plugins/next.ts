@@ -4,7 +4,7 @@ import Next from 'next';
 
 import type { ServerResponse } from 'http';
 import type { FastifyInstance, RegisterOptions } from 'fastify';
-import type { Thruway } from '../../@types/thruway';
+import type { ESW } from '../../@types/esw';
 
 export default fp(
   async (
@@ -44,7 +44,7 @@ export default fp(
       try {
         await req.jwtVerify();
 
-        const user = req.user as Thruway.JwtToken;
+        const user = req.user as ESW.JwtToken;
 
         if (user.email !== 'eborai@thruway.com') {
           // If the user doesn't fill up requirements then

@@ -1,24 +1,23 @@
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
-  OneToMany,
   CreateDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
-import ParkingSlot from './parking-slot';
-
 import type { ESW } from '../../@types/esw';
+import Building from './building';
 
-@Entity({ name: 'parking_lots' })
-export default class ParkingLot {
+@Entity({ name: 'residences' })
+export default class Residence {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({
     type: 'varchar',
-    length: 128,
+    length: 200,
     nullable: false,
   })
   name: string;
@@ -38,15 +37,15 @@ export default class ParkingLot {
   })
   public updatedAt: Date;
 
-  @OneToMany(() => ParkingSlot, (parkingSlot) => parkingSlot.parkingLotId)
-  public slots: ParkingSlot[];
+  @OneToMany(() => Building, (building) => building.residenceId)
+  public buildings: Building[];
 
-  public toPresentationLayer(): ESW.ParkingLot {
+  public toPresentationLayer(): ESW.Residence {
     return {
       id: this.id,
       name: this.name,
       createdAt: this.createdAt,
-      updateAt: this.updatedAt,
+      updatedAt: this.updatedAt,
     };
   }
 }
