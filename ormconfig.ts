@@ -1,9 +1,9 @@
 const {
   PGHOST = '127.0.0.1',
   PGPORT = 5432,
-  POSTGRES_DB = 'thruway',
-  POSTGRES_USER = 'thruway',
-  POSTGRES_PASSWORD = 'thruway',
+  POSTGRES_DB = 'parking',
+  POSTGRES_USER = 'parking',
+  POSTGRES_PASSWORD = 'parking',
 } = process.env;
 
 export default {

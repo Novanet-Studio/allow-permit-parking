@@ -1,6 +1,6 @@
 <div align="center">
   <img src="./docs/logo.png" height="160" width="160" />
-  <h1>thruway-parking</h1>
+  <h1>ESW Allow Permit Parking</h1>
   <h4 align="center">
     🅿️ Parking Lot management web application for multiple purposes, with slot
     reservation, users and guests capabilities
@@ -9,9 +9,9 @@
 
 <div align="center">
 
-![Build](https://github.com/EstebanBorai/thruway-parking/workflows/build/badge.svg)
-![Test](https://github.com/EstebanBorai/thruway-parking/workflows/test/badge.svg)
-![Lint](https://github.com/EstebanBorai/thruway-parking/workflows/lint/badge.svg)
+![Build](https://github.com/Novanet-Studio/allow-permit-parking/workflows/build/badge.svg)
+![Test](https://github.com/Novanet-Studio/allow-permit-parking/workflows/test/badge.svg)
+![Lint](https://github.com/Novanet-Studio/allow-permit-parking/workflows/lint/badge.svg)
 
 </div>
 
@@ -20,12 +20,9 @@
 This application is completely build with TypeScript using Fastify and NextJS
 to power up a server with Server Side Rendering capabilities for ReactJS.
 
-Docker is also used to host a MongoDB instance.
+Docker is also used to host a PostgreSQL instance.
 
-For ReactJS components styles we are using TailwindCSS, composing utilities
-with the `@apply` and `@screen` features.
-
-Learn more here: [Composing Utilities with @apply](https://v1.tailwindcss.com/course/composing-utilities-with-apply)
+For ReactJS components styles we are using CSS modules.
 
 # Usage
 
@@ -75,7 +72,7 @@ Run this project with Docker using the `Dockerfile` included.
 First you must build the image using `docker build` command:
 
 ```bash
-PORT=3000 docker build -t thruway .
+PORT=3000 docker build -t esw .
 ```
 
 Then run the container by using the `./bin/docker_run_default` script.
