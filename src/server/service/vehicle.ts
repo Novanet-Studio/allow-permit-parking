@@ -14,7 +14,7 @@ export type CreateVehicleDTO = {
 };
 
 export interface IVehicleService {
-  create(dto: CreateVehicleDTO): Promise<Vehicle>;
+  create(driverId: string, dto: CreateVehicleDTO): Promise<Vehicle>;
   findById(id: string): Promise<Vehicle>;
 }
 
@@ -25,9 +25,9 @@ export default class VehicleService implements IVehicleService {
     this.driverService = driverService;
   }
 
-  async create(dto: CreateVehicleDTO): Promise<Vehicle> {
+  async create(driverId: string, dto: CreateVehicleDTO): Promise<Vehicle> {
     const vehicleRepository = getRepository(Vehicle);
-    const driver = await this.driverService.findById(dto.driverId);
+    const driver = await this.driverService.findById(driverId);
     const vehicle = new Vehicle();
 
     vehicle.license = dto.license;

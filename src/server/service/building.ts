@@ -10,6 +10,7 @@ export type CreateBuildingDTO = {
 };
 
 export interface IBuildingService {
+  getAll(): Promise<Building[]>;
   create(residenceId: string, dto: CreateBuildingDTO): Promise<Building>;
   findById(id: string): Promise<Building>;
 }
@@ -19,6 +20,13 @@ export default class BuildingService implements IBuildingService {
 
   constructor(residenceService: IResidenceService) {
     this.residenceService = residenceService;
+  }
+
+  async getAll(): Promise<Building[]> {
+    const buildingRepository = getRepository(Building);
+    const allBuildings = await buildingRepository.find();
+
+    return allBuildings;
   }
 
   async create(residenceId: string, dto: CreateBuildingDTO): Promise<Building> {

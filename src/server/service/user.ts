@@ -17,6 +17,7 @@ export type CreateUserDTO = {
 };
 
 export interface IUserService {
+  getAll(): Promise<User[]>;
   create(dto: CreateUserDTO): Promise<User>;
   findByEmail(email: string): Promise<User>;
   findById(id: string): Promise<User>;
@@ -35,6 +36,13 @@ export default class UserService implements IUserService {
     const hash = await bcrypt.hash(plain, 10);
 
     return hash;
+  }
+
+  async getAll(): Promise<User[]> {
+    const userRepository = getRepository(User);
+    const allUsers = await userRepository.find();
+
+    return allUsers;
   }
 
   async create(dto: CreateUserDTO): Promise<User> {

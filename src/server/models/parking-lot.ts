@@ -5,9 +5,11 @@ import {
   OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
 } from 'typeorm';
 
 import ParkingSlot from './parking-slot';
+import Building from './building';
 
 import type { ESW } from '../../@types/esw';
 
@@ -41,10 +43,14 @@ export default class ParkingLot {
   @OneToMany(() => ParkingSlot, (parkingSlot) => parkingSlot.parkingLotId)
   public slots: ParkingSlot[];
 
+  @ManyToOne(() => Building, (building) => building.lots)
+  buildingId: string;
+
   public toPresentationLayer(): ESW.ParkingLot {
     return {
       id: this.id,
       name: this.name,
+      buildingId: this.buildingId,
       createdAt: this.createdAt,
       updateAt: this.updatedAt,
     };

@@ -11,6 +11,12 @@ import ParkingLot from './parking-lot';
 
 import type { ESW } from '../../@types/esw';
 
+export enum ParkingType {
+  Permit = 'permit',
+  Reserved = 'reserved',
+  Visitor = 'visitor',
+}
+
 @Entity({ name: 'parking_slots' })
 export default class ParkingSlot {
   @PrimaryGeneratedColumn('uuid')
@@ -22,6 +28,13 @@ export default class ParkingSlot {
     nullable: false,
   })
   name: string;
+
+  @Column({
+    type: 'enum',
+    enum: ParkingType,
+    default: ParkingType.Permit,
+  })
+  parkingType: ParkingType;
 
   @CreateDateColumn({
     name: 'created_at',
@@ -41,10 +54,15 @@ export default class ParkingSlot {
   @ManyToOne(() => ParkingLot, (parkingLot) => parkingLot.slots)
   public parkingLotId: string;
 
+  public isAllowed(requiredParkingTypes: ParkingType[]): boolean {
+    return requiredParkingTypes.includes(this.parkingType);
+  }
+
   public toPresentationLayer(): ESW.ParkingSlot {
     return {
       id: this.id,
       name: this.name,
+      parkingType: this.parkingType,
       parkingLotId: this.parkingLotId,
       createdAt: this.createdAt,
       updateAt: this.updatedAt,

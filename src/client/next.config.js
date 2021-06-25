@@ -1,5 +1,3 @@
-module.exports = (phase, { defaultConfig }) => {
-  return {
-    /* config options here */
-  };
-};
+const withImage = require('next-images');
+
+module.exports = withImage();

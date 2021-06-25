@@ -1,0 +1,35 @@
+.dropdown {
+  display: grid;
+  grid-template-columns: repeat(4, 2fr);
+  &__group {
+    padding: 0.5em;
+    margin-bottom: 2em;
+    font-size: 0.95rem;
+    line-height: 1.2rem;
+    border: 2px solid $gris-2;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background: transparent;
+    background-image: url("../../assets/images/app_icon_down.svg");
+    background-repeat: no-repeat;
+    background-size: 0.7em;
+    background-position-x: 97%;
+    background-position-y: 50%;
+    cursor: pointer;
+    &:focus {
+      outline: none;
+    }
+
+    &--add {
+      margin-top: 1em;
+      margin-bottom:0;
+    }
+
+    &--botton {
+      margin-bottom:0;
+    }
+  }
+  &--full {
+    grid-template-columns: repeat(1, 2fr);
+  }
+}

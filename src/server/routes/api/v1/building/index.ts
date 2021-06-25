@@ -19,6 +19,41 @@ export default function (
   _: FastifyRegisterOptions<unknown>,
   done: (err?: FastifyError) => void,
 ): void {
+  fastify.get('/', async (request: FastifyRequest, reply: FastifyReply) => {
+    try {
+      const allBuildings = await fastify.services.building.getAll();
+      const buildings = allBuildings.map((building) =>
+        building.toPresentationLayer(),
+      );
+
+      return httpResponse.created(reply, buildings);
+    } catch (error) {
+      return httpResponse.internalServerError(reply, error);
+    }
+  });
+
+  fastify.get(
+    '/:id',
+    async (
+      request: FastifyRequest<{
+        Params: {
+          id: string;
+        };
+      }>,
+      reply: FastifyReply,
+    ) => {
+      try {
+        const building = await fastify.services.building.findById(
+          request.params.id,
+        );
+
+        return httpResponse.created(reply, building.toPresentationLayer());
+      } catch (error) {
+        return httpResponse.internalServerError(reply, error);
+      }
+    },
+  );
+
   fastify.post(
     '/:id',
     { schema: validationSchema.createBuildingSchema },

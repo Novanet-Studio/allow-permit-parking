@@ -7,14 +7,14 @@ import {
   setLocalStorageValue,
 } from '../utils/local-storage';
 
-import type { Thruway } from '../../@types/thruway';
+import type { ESW } from '../../@types/esw';
 
 export type Props = {
   children: JSX.Element;
 };
 
 export interface UserContext {
-  user: Thruway.User | null;
+  user: ESW.User | null;
   login(email: string, password: string): Promise<void>;
   resumeSession(): Promise<void>;
 }
@@ -24,9 +24,9 @@ const UserContext = createContext<UserContext>(null);
 UserContext.displayName = 'UserContext';
 
 export function UserContextProvider({ children }: Props): JSX.Element {
-  const [user, setUser] = useState<Thruway.User | null>(null);
+  const [user, setUser] = useState<ESW.User | null>(null);
 
-  const openSession = (user: Thruway.User) => {
+  const openSession = (user: ESW.User) => {
     setUser(user);
     setLocalStorageValue(Key.User, user);
   };

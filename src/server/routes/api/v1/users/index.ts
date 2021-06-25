@@ -19,6 +19,37 @@ export default function (
   _: FastifyRegisterOptions<unknown>,
   done: (err?: FastifyError) => void,
 ): void {
+  fastify.get('/', async (request: FastifyRequest, reply: FastifyReply) => {
+    try {
+      const allUsers = await fastify.services.user.getAll();
+      const users = allUsers.map((user) => user.toPresentationLayer());
+
+      return httpResponse.created(reply, users);
+    } catch (error) {
+      return httpResponse.internalServerError(reply, error);
+    }
+  });
+
+  fastify.get(
+    '/:id',
+    async (
+      request: FastifyRequest<{
+        Params: {
+          id: string;
+        };
+      }>,
+      reply: FastifyReply,
+    ) => {
+      try {
+        const user = await fastify.services.user.findById(request.params.id);
+
+        return httpResponse.created(reply, user.toPresentationLayer());
+      } catch (error) {
+        return httpResponse.internalServerError(reply, error);
+      }
+    },
+  );
+
   fastify.post(
     '/',
     { schema: validationSchema.createUserSchema },

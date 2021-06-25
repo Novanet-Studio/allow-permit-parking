@@ -2,8 +2,6 @@ import React from 'react';
 
 import type { ChangeEvent, FocusEvent } from 'react';
 
-import styles from './form.module.css';
-
 type Props = {
   name: string;
   type?: 'text' | 'email' | 'password' | 'number';
@@ -25,7 +23,7 @@ export default function Input({
 }: Props): JSX.Element {
   return (
     <input
-      className={styles.input}
+      className="form__input"
       id={name}
       name={name}
       type={type}

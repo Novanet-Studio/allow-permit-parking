@@ -1,4 +1,5 @@
 import { Role } from '../server/models/user';
+import { ParkingType } from '../server/models/parking-slot';
 
 declare namespace ESW {
   interface JwtToken {
@@ -32,6 +33,7 @@ declare namespace ESW {
   interface ParkingLot {
     id: string;
     name: string;
+    buildingId: string;
     createdAt: Date;
     updateAt: Date;
   }
@@ -39,6 +41,7 @@ declare namespace ESW {
   interface ParkingSlot {
     id: string;
     name: string;
+    parkingType: ParkingType;
     parkingLotId: string;
     createdAt: Date;
     updateAt: Date;

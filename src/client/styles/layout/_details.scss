@@ -1,0 +1,57 @@
+.detail {
+  display: grid;
+  grid-template-columns: repeat(16, 2fr);
+
+  &__left {
+    grid-column: 1 / 4;
+  }
+
+  &__right {
+    grid-column: 4 / 17;
+  }
+
+  &__title {
+    color: black;
+  }
+
+  &__subtitle {
+    margin: 1.5em 0 0.7em 0;
+  }
+
+  &__text {
+    margin-top: 1.5em;
+    font-weight: 600;
+    color: $gris;
+  }
+
+  &__subtext {
+    margin-top: 0.5em;
+    margin-bottom: 1.5em;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: $gris-3;
+  }
+
+  &__menu {
+    margin-top: 0.5em;
+  }
+
+  &__links {
+    padding: 0.5em 0;
+    font-size: 0.9rem;
+  }
+
+  &__right {
+    .table {
+      margin-top: 0.5em;
+      &__column {
+        &:first-child {
+          .table__head,
+          .table__row {
+            justify-content: center;
+          }
+        }
+      }
+    }
+  }
+}

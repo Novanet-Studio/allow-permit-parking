@@ -14,11 +14,49 @@ export default function (
   _: FastifyRegisterOptions<unknown>,
   done: (err?: FastifyError) => void,
 ): void {
+  fastify.get('/', async (request: FastifyRequest, reply: FastifyReply) => {
+    try {
+      const allParkingLots = await fastify.services.parkingLot.getAll();
+      const parkingLots = allParkingLots.map((parkingLot) =>
+        parkingLot.toPresentationLayer(),
+      );
+
+      return httpResponse.created(reply, parkingLots);
+    } catch (error) {
+      return httpResponse.internalServerError(reply, error);
+    }
+  });
+
+  fastify.get(
+    '/:id',
+    async (
+      request: FastifyRequest<{
+        Params: {
+          id: string;
+        };
+      }>,
+      reply: FastifyReply,
+    ) => {
+      try {
+        const parkingLot = await fastify.services.parkingLot.findById(
+          request.params.id,
+        );
+
+        return httpResponse.created(reply, parkingLot.toPresentationLayer());
+      } catch (error) {
+        return httpResponse.internalServerError(reply, error);
+      }
+    },
+  );
+
   fastify.post(
-    '/',
+    '/:id',
     { schema: validationSchema.createParkingLotSchema },
     async (
       request: FastifyRequest<{
+        Params: {
+          id: string;
+        };
         Body: {
           name: string;
         };
@@ -27,6 +65,7 @@ export default function (
     ) => {
       try {
         const parkingLot = await fastify.services.parkingLot.create(
+          request.params.id,
           request.body,
         );
 

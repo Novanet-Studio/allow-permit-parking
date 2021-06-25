@@ -1,0 +1,11 @@
+.subheader {
+  @include flex-center();
+  padding: 1em;
+  margin-bottom: 2em;
+  border-radius: .9em;
+  background-color: $gris-2;
+  &__icon {
+    width: 1.5em;
+    margin-right: .5em;
+  }
+}

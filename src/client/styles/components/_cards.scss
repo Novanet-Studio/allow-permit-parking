@@ -1,0 +1,38 @@
+.card {
+  display: grid;
+  grid-template-columns: repeat(4, 2fr);
+
+/*------- Card Box -------*/
+  &__box {
+    padding: 1em 1em .5em 1em;
+    margin: 0 .7em;
+    border-radius: .9em;
+    border: 2px solid $gris-2;
+    &:first-child {
+      margin-left: 0;
+    }
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+
+/*------- Card Heading -------*/
+  &__heading {
+    display: flex;
+    padding-bottom: 1em;
+    margin-bottom: 1em;
+    border-bottom: 2px solid $gris-2;
+  }
+
+/*------- Card Icon -------*/
+  &__icon {
+    width: 1.5em;
+    margin-right: .5em;
+  }
+
+ /*------- Card Link -------*/
+  &__link {
+    margin: 1em 0;
+    font-size: .95rem;
+  }
+}

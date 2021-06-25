@@ -2,6 +2,7 @@ import { getRepository } from 'typeorm';
 
 import ParkingLot from '../models/parking-lot';
 import { ParkingLotWithIDNotFound } from '../error/parking-lot.service';
+import { IBuildingService } from './building';
 
 export type CreateParkingLotDTO = {
   name: string;
@@ -13,18 +14,37 @@ export type UpdateParkingLotDTO = {
 };
 
 export interface IParkingLotService {
-  create(dto: CreateParkingLotDTO): Promise<ParkingLot>;
+  getAll(): Promise<ParkingLot[]>;
+  create(buildingId: string, dto: CreateParkingLotDTO): Promise<ParkingLot>;
   update(dto: UpdateParkingLotDTO): Promise<ParkingLot>;
   remove(id: string): Promise<ParkingLot>;
   findById(id: string): Promise<ParkingLot>;
 }
 
 export default class ParkingLotService implements IParkingLotService {
-  async create(dto: CreateParkingLotDTO): Promise<ParkingLot> {
+  private buildingService: IBuildingService;
+
+  constructor(buildingService: IBuildingService) {
+    this.buildingService = buildingService;
+  }
+
+  async getAll(): Promise<ParkingLot[]> {
     const parkingLotRepository = getRepository(ParkingLot);
+    const allParkingLots = await parkingLotRepository.find();
+
+    return allParkingLots;
+  }
+
+  async create(
+    buildingId: string,
+    dto: CreateParkingLotDTO,
+  ): Promise<ParkingLot> {
+    const parkingLotRepository = getRepository(ParkingLot);
+    const building = await this.buildingService.findById(buildingId);
     const parkingLot = new ParkingLot();
 
     parkingLot.name = dto.name;
+    parkingLot.buildingId = building.id;
 
     const createdParkingLot = await parkingLotRepository.save(parkingLot);
 

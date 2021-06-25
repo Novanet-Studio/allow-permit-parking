@@ -4,9 +4,12 @@ export default {
   createParkingSlotSchema: {
     body: {
       type: 'object',
-      required: ['name'],
+      required: ['name', 'parkingType'],
       properties: {
         name: {
+          type: 'string',
+        },
+        parkingType: {
           type: 'string',
         },
       },

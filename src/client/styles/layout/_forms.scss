@@ -1,0 +1,67 @@
+.form {
+  display: grid;
+  grid-template-columns: repeat(2, 2fr);
+  &__group {
+    position: relative;
+    margin: 1em;
+    &:nth-child(even) {
+      margin-right:0;
+    }
+    &:nth-child(odd) {
+      margin-left:0;
+    }
+
+    /*------- Group Full -------*/
+    &--full {
+      margin-left: 0;
+      margin-right: 0;
+    }
+
+    /*------- Group Number Range -------*/
+    &--range {
+      margin-top: 0;
+      &::after {
+        content: "—";
+        font-weight: 600;
+        position: absolute;
+        top: 50%;
+        right: -13%;
+        color: $gris-3;
+      }
+      &:last-child {
+        &::after {
+          content: "";
+        }
+      }
+    }
+  }
+
+  /*------- Label -------*/
+  &__label {
+    padding-bottom: 1em;
+    font-size: 0.9rem;
+  }
+
+  /*------- Input -------*/
+  &__input {
+    width: 100%;
+    padding-bottom: 1em;
+    font-size: 0.9rem;
+    border-bottom: 2px solid $gris-3;
+  }
+
+  /*------- Login Mmode -------*/
+  &--one-column {
+    grid-template-columns: repeat(1, 2fr);
+  }
+
+  /*------- Login Three Colum -------*/
+  &--three-columns {
+    grid-template-columns: repeat(3, 2fr);
+  }
+
+  /*------- Login Mode -------*/
+  &--login-mode {
+    grid-column: 2 / 6;
+  }
+}

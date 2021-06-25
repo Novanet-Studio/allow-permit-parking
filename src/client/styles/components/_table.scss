@@ -1,0 +1,48 @@
+.table {
+  margin-bottom: 1em;
+  border: 1px solid $gris-2;
+  &__head,
+  &__row,
+  &__data {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+  }
+  &__head {
+    padding: 0.7em 1em;
+    background-color: $gris-2;
+  }
+  &__row {
+    min-height: 1.6em;
+    padding: 0.5em 1em;
+  }
+  &__data {
+    font-size: 0.9rem;
+  }
+  &__column,
+  &__head {
+    flex: 1;
+  }
+  &__head {
+    padding: 0.7em 1em;
+    background-color: $gris-2;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+  }
+  &__row {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    min-height: 1.6em;
+    padding: 0.5em 1em;
+    font-size: 0.9rem;
+    &:nth-child(odd) {
+      background-color: $gris-4;
+    }
+  }
+  &__button-wrapper {
+    margin-bottom: 0.5em;
+  }
+}

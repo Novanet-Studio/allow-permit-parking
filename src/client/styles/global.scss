@@ -1,0 +1,36 @@
+// Utilities
+@import 'utilities/variables';
+@import 'utilities/mixins';
+
+// Vendors
+@import 'vendors/normalize';
+
+// Base
+@import 'base/reset';
+@import 'base/typography';
+
+// Layout
+@import 'layout/container';
+@import 'layout/main';
+@import 'layout/header';
+@import 'layout/forms';
+@import 'layout/grid';
+@import 'layout/details';
+@import 'layout/heading-table';
+
+// Components
+@import 'components/buttons';
+@import 'components/breadcrumb';
+@import 'components/subheader';
+@import 'components/cards';
+@import 'components/dropdown';
+@import 'components/table';
+@import 'components/modal';
+
+// Pages
+@import 'pages/login';
+@import 'pages/dashboard';
+@import 'pages/properties';
+@import 'pages/parking';
+@import 'pages/residents';
+@import 'pages/users';

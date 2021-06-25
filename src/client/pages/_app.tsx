@@ -6,7 +6,7 @@ import LoginScreen from '../modules/auth/screens/Login';
 
 import type { NextComponentType } from 'next';
 
-import '../styles/global.css';
+import '../styles/global.scss';
 
 function App({
   Component,
@@ -30,14 +30,9 @@ function App({
                     name="viewport"
                     content="initial-scale=1.0, width=device-width"
                   />
-                  <title>Thruway | Login</title>
-                  <link rel="preconnect" href="https://fonts.gstatic.com" />
-                  <link
-                    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap"
-                    rel="stylesheet"
-                  />
+                  <title>ESW | Login</title>
                 </Head>
-                <div>
+                <div className="container">
                   <LoginScreen />
                 </div>
               </>
@@ -51,13 +46,10 @@ function App({
                   name="viewport"
                   content="initial-scale=1.0, width=device-width"
                 />
-                <link rel="preconnect" href="https://fonts.gstatic.com" />
-                <link
-                  href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap"
-                  rel="stylesheet"
-                />
               </Head>
-              <Component {...pageProps} />
+              <div className="container">
+                <Component {...pageProps} />
+              </div>
             </>
           );
         }}

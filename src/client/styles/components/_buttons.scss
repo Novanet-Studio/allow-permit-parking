@@ -1,0 +1,92 @@
+.button {
+  padding: 0.6em;
+  margin-top: 0.5em;
+  font-size: 1rem;
+  background-color: $azul;
+  color: white;
+  
+  &__link {
+    color: white;
+  }
+
+  /*------- Icon Button -------*/
+  &__icon {
+    width: 0.8em;
+    filter: brightness(0) invert(1);
+  }
+
+  /*------- Big Button -------*/
+  &--big {
+    width: 100%;
+  }
+
+  /*------- Button Gray -------*/
+  &--gray {
+    margin-top: 0;
+    margin-left: 0.8em;
+    font-weight: 400;
+    font-size: 0.85rem;
+    background-color: $gris-3;
+    &__link {
+      color: black;
+    }
+  }
+
+  /*------- Button Top -------*/
+  &--top {
+    margin-top: 0;
+  }
+
+  /*------- Button Table -------*/
+  &--table {
+    padding: 0.15em 1em;
+    margin: 0 0.5em;
+    font-size: 0.9rem;
+  }
+
+  /*------- Button Orange -------*/
+  &--orange {
+    background-color: $naranja;
+  }
+
+  /*------- Button Green -------*/
+  &--green {
+    background-color: $verde;
+  }
+
+  /*------- Button Red -------*/
+  &--red {
+    background-color: $rojo;
+  }
+
+  /*------- Button Plus -------*/
+  &--plus {
+    @include flex-center();
+    margin-top: 0;
+    padding: 0;
+    width: 2em;
+    height: 2em;
+    justify-content: center;
+    border-radius: 50%;
+    border: 2px solid $azul;
+    color: $azul;
+    background-color: white;
+    
+  }
+}
+
+/*------- Button Plus Section -------*/
+.plus {
+  @include flex-center();
+  justify-content: center;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  &__icon {
+    width: 0.8em;
+  }
+
+  &--modal-mode {
+    margin-top:0;
+    margin-bottom:0;
+  }
+}

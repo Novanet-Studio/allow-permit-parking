@@ -3,10 +3,7 @@ import { useFormik } from 'formik';
 
 import * as F from '../../../../components/Form';
 import Button from '../../../../components/Button';
-import Card from '../../../../components/Card';
 import useUser from '../../../../hooks/use-user';
-
-import styles from './login.module.css';
 
 type LoginForm = {
   email: string;
@@ -32,48 +29,48 @@ export default function LoginScreen(): JSX.Element {
   }, []);
 
   return (
-    <section className={styles.login}>
-      <Card className={styles.form_wrapper}>
-        <form onSubmit={formik.handleSubmit}>
-          <F.Fieldset>
+    <section className="login">
+      <header className="header header--login">
+        <h1 className="header__title header__title--black">
+          ESW Towing parking management system
+        </h1>
+        <p className="header__text">Please enter your credentials</p>
+      </header>
+
+      <main className="main main--login">
+        <form
+          onSubmit={formik.handleSubmit}
+          className="form form--one-column form--login-mode"
+        >
+          <F.Group>
             <F.Label text="Email" htmlFor="email" />
             <F.Input
               type="email"
               name="email"
-              placeholder="john@appleseed.com"
               value={formik.values.email}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               onFocus={formik.handleBlur}
             />
             <F.Feedback text={formik.errors.email} />
-          </F.Fieldset>
-          <F.Fieldset>
+          </F.Group>
+          <F.Group>
             <F.Label text="Password" htmlFor="password" />
             <F.Input
               type="password"
               name="password"
-              placeholder="Your most valuable secret"
               value={formik.values.password}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               onFocus={formik.handleBlur}
             />
             <F.Feedback text={formik.errors.password} />
-          </F.Fieldset>
-          <div className="flex items-center justify-between">
-            <Button type="submit">Sign In</Button>
-          </div>
+          </F.Group>
+          <F.Group>
+            <Button type="submit">Login</Button>
+          </F.Group>
         </form>
-      </Card>
-      <p className="text-center text-gray-500 text-xs">
-        <a
-          href="https://github.com/EstebanBorai/thruway-parking"
-          target="_blank"
-        >
-          Thruway Parking Source
-        </a>
-      </p>
+      </main>
     </section>
   );
 }

@@ -1,0 +1,13 @@
+.breadcrumb {
+  display: flex;
+  margin-bottom: 1.5em;
+  cursor: pointer;
+  &__icon {
+    width: .7em;
+    margin-right: .3em;
+  }
+  &__text {
+    font-size: .8rem;
+    font-weight: 600;
+  }
+}

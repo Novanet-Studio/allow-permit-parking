@@ -9,18 +9,26 @@ import type {
   FastifyRequest,
 } from 'fastify';
 
+type Vehicle = {
+  driverId: string;
+  license: string;
+  color: string;
+  model: string;
+  brand: string;
+};
+
 export default function (
   fastify: FastifyInstance,
   _: FastifyRegisterOptions<unknown>,
   done: (err?: FastifyError) => void,
 ): void {
   fastify.post(
-    '/',
+    '/:id',
     { schema: validationSchema.createVehicleSchema },
     async (
       request: FastifyRequest<{
         Params: {
-          driverId: string;
+          id: string;
         };
         Body: {
           license: string;
@@ -32,13 +40,10 @@ export default function (
       reply: FastifyReply,
     ) => {
       try {
-        const createdVehicle = await fastify.services.vehicle.create({
-          color: request.body.color,
-          driverId: request.params.driverId,
-          license: request.body.license,
-          brand: request.body.brand,
-          model: request.body.model,
-        });
+        const createdVehicle = await fastify.services.vehicle.create(
+          request.params.id,
+          request.body as Vehicle,
+        );
 
         return createdVehicle.toPresentationLayer();
       } catch (error) {

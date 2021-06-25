@@ -1,0 +1,11 @@
+.container {
+  display: grid;
+  align-items: center;
+  grid-template-columns: repeat(16, 2fr);
+  margin: 0 auto;
+  width: 80em;
+  min-height: 100vh;
+  & > div {
+    margin: 1.5em 0;
+  }
+}

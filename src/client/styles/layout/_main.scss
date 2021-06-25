@@ -1,0 +1,13 @@
+.main {
+  align-content: flex-start;
+  padding: 2em 1.5em;
+  min-height: 38em;
+  border-radius: 0 0 .9em .9em;
+
+  /*------- Main Login -------*/
+  &--login {
+    min-height: auto;
+    grid-template-columns: repeat(6, 2fr);
+    padding: 1em 0 1.5em;
+  }
+}

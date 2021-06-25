@@ -3,11 +3,13 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
 import Residence from './residence';
+import ParkingLot from './parking-lot';
 
 import type { ESW } from '../../@types/esw';
 
@@ -40,6 +42,9 @@ export default class Building {
 
   @ManyToOne(() => Residence, (residence) => residence.buildings)
   public residenceId: string;
+
+  @OneToMany(() => ParkingLot, (parkingLot) => parkingLot.buildingId)
+  public lots: ParkingLot[];
 
   public toPresentationLayer(): ESW.Building {
     return {

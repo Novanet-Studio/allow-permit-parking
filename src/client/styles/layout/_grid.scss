@@ -1,0 +1,9 @@
+.wrapper-grid {
+  display: grid;
+  grid-template-columns: repeat(16, 2fr);
+
+  /*------- 2 Columns -------*/
+  &__half {
+    grid-column: 1 / 9;
+  }
+}

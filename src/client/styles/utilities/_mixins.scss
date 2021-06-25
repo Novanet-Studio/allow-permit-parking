@@ -1,0 +1,17 @@
+@mixin fontFamily($weight, $type) {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: $weight;
+  src: url('../../assets/fonts/OpenSans/OpenSans-#{$type}.ttf');
+  src: local(''), url('../../assets/fonts/OpenSans/OpenSans-#{$type}.ttf');
+}
+
+@mixin grid-auto() {
+  display: grid;
+  grid-template-rows: auto;
+}
+
+@mixin flex-center() {
+  display: flex;
+  align-items: center;
+}

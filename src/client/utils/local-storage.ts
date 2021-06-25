@@ -3,7 +3,7 @@ export enum Key {
 }
 
 export function getLocalStorageValue<T>(key: Key): T | null {
-  const value = localStorage.getItem(`thruway::${key.toString()}`);
+  const value = localStorage.getItem(`parking::${key.toString()}`);
 
   if (value) {
     return JSON.parse(value);
@@ -13,7 +13,7 @@ export function getLocalStorageValue<T>(key: Key): T | null {
 }
 
 export function setLocalStorageValue<T>(key: Key, value: T): void {
-  const keyString = `thruway::${key.toString()}`;
+  const keyString = `parking::${key.toString()}`;
 
   localStorage.setItem(keyString, JSON.stringify(value));
 }
