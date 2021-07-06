@@ -5,7 +5,11 @@ import type { AxiosResponse, AxiosRequestConfig } from 'axios';
 
 export interface UseRequestHook<T> {
   error: Error | null;
-  execute(params: AxiosRequestConfig): Promise<AxiosResponse<T>>;
+  execute(
+    uri: string,
+    data?: unknown,
+    axiosParams?: AxiosRequestConfig,
+  ): Promise<AxiosResponse<T>>;
   response: T | null;
   isLoading: boolean;
 }
@@ -17,24 +21,29 @@ export default function useRequest<T>(
   const [error, setError] = useState<Error | null>(null);
   const [isLoading, setLoading] = useState<boolean>(false);
 
-  const execute = useCallback(async (data?: unknown) => {
-    setLoading(true);
+  const execute = useCallback(
+    async (uri: string, data?: unknown, axiosParams?: AxiosRequestConfig) => {
+      setLoading(true);
 
-    try {
-      const result = await axios.request({
-        ...params,
-        data: data ?? null,
-      });
+      try {
+        const result = await axios.request({
+          ...params,
+          ...(axiosParams ?? null),
+          url: uri,
+          data: data ?? null,
+        });
 
-      setResponse(result.data);
+        setResponse(result.data);
 
-      return result;
-    } catch (error) {
-      setError(error);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+        return result;
+      } catch (error) {
+        setError(error);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [],
+  );
 
   return {
     error,

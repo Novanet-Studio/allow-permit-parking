@@ -1,7 +1,7 @@
 import httpResponse from '../../../../utils/http-response';
 import validationSchema from './validation-schema';
-import { ParkingLotWithIDNotFound } from '../../../../error/parking-lot.service';
 import { ParkingSlotWithIDNotFound } from '../../../../error/parking-slot.service';
+import { ResidenceWithIDNotFound } from '../../../../error/residence.service';
 import { ParkingType } from '../../../../models/parking-slot';
 
 import type {
@@ -14,8 +14,9 @@ import type {
 
 type ParkingSlot = {
   name: string;
-  parkingLotId: string;
-  parkingType: ParkingType;
+  parkingType: string;
+  isAvailable: boolean;
+  residenceId: string;
 };
 
 export default function (
@@ -30,7 +31,7 @@ export default function (
         parkingSlot.toPresentationLayer(),
       );
 
-      return httpResponse.created(reply, parkingLots);
+      return httpResponse.ok(reply, parkingLots);
     } catch (error) {
       return httpResponse.internalServerError(reply, error);
     }
@@ -51,7 +52,7 @@ export default function (
           request.params.id,
         );
 
-        return httpResponse.created(reply, parkingSlot.toPresentationLayer());
+        return httpResponse.ok(reply, parkingSlot.toPresentationLayer());
       } catch (error) {
         return httpResponse.internalServerError(reply, error);
       }
@@ -81,7 +82,7 @@ export default function (
 
         return httpResponse.created(reply, parkingSlot.toPresentationLayer());
       } catch (error) {
-        if (error instanceof ParkingLotWithIDNotFound) {
+        if (error instanceof ResidenceWithIDNotFound) {
           return httpResponse.badRequestMessage(reply, error.message, error);
         }
 
@@ -91,13 +92,12 @@ export default function (
   );
 
   fastify.put(
-    '/:id/slot/:slot_id',
+    '/:id',
     { schema: validationSchema.updateParkingSlotSchema },
     async (
       request: FastifyRequest<{
         Params: {
           id: string;
-          slot_id: string;
         };
         Body: {
           name: string;
@@ -107,17 +107,13 @@ export default function (
     ) => {
       try {
         const parkingSlot = await fastify.services.parkingSlot.update({
-          id: request.params.slot_id,
-          parkingLotId: request.params.id,
+          id: request.params.id,
           ...request.body,
         });
 
         return httpResponse.ok(reply, parkingSlot.toPresentationLayer());
       } catch (error) {
-        if (
-          error instanceof ParkingLotWithIDNotFound ||
-          error instanceof ParkingSlotWithIDNotFound
-        ) {
+        if (error instanceof ParkingSlotWithIDNotFound) {
           return httpResponse.badRequestMessage(reply, error.message, error);
         }
 
@@ -127,27 +123,23 @@ export default function (
   );
 
   fastify.delete(
-    '/:id/slot/:slot_id',
+    '/:id',
     async (
       request: FastifyRequest<{
         Params: {
           id: string;
-          slot_id: string;
         };
       }>,
       reply: FastifyReply,
     ) => {
       try {
         const removed = await fastify.services.parkingSlot.remove(
-          request.params.slot_id,
+          request.params.id,
         );
 
         return httpResponse.ok(reply, removed.toPresentationLayer());
       } catch (error) {
-        if (
-          error instanceof ParkingLotWithIDNotFound ||
-          error instanceof ParkingSlotWithIDNotFound
-        ) {
+        if (error instanceof ParkingSlotWithIDNotFound) {
           return httpResponse.badRequestMessage(reply, error.message, error);
         }
 

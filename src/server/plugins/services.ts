@@ -45,7 +45,7 @@ export default fp(
     const residence = new ResidenceService();
     const building = new BuildingService(residence);
     const parkingLot = new ParkingLotService(building);
-    const parkingSlot = new ParkingSlotService(parkingLot);
+    const parkingSlot = new ParkingSlotService(residence);
     const driver = new DriverService(user);
     const vehicle = new VehicleService(driver);
 

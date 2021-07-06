@@ -62,11 +62,17 @@ export default class Driver {
   public updatedAt: Date;
 
   @ManyToOne(() => User, (user) => user.id)
-  public userId: string;
+  public user: User;
+
+  @Column({ nullable: false })
+  userId: string;
 
   @ManyToMany(() => Vehicle, (vehicle) => vehicle.id)
   @JoinTable()
-  public vehicleId: string;
+  public vehicle: Vehicle[];
+
+  @Column({ nullable: false })
+  vehicleId: string;
 
   public toPresentationLayer(): ESW.Driver {
     return {

@@ -7,14 +7,14 @@
   "license": "MIT",
   "scripts": {
     "build": "NEXT_TELEMETRY_DISABLED=1 yarn build:client && yarn build:server",
-    "build:production": "NODE_ENV=production yarn run build && ./bin/prepare_prod",
+    "build:production": "NODE_ENV=production yarn install && yarn run build && ./bin/prepare_prod",
     "build:client": "NEXT_TELEMETRY_DISABLED=1 next build ./src/client",
     "build:server": "tsc",
     "dev": "NODE_ENV=development NEXT_TELEMETRY_DISABLED=1 ts-node-dev --ignore-watch ./src/client --transpile-only ./src/main.ts",
     "eslint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "fmt": "eslint . --ext .js,.jsx,.ts,.tsx --fix && prettier --write \"**/*.{json,md,yml,ts,tsx,js,jsx}\"",
     "prettier": "prettier -c \"**/*.{md,json,yml,sh}\"",
-    "start": "NEXT_TELEMETRY_DISABLED=1 node ./dist/main.js",
+    "start": "node ./dist/main.js",
     "test": "jest",
     "migration:run": "ts-node --project ./tsconfig.json --transpile-only ./node_modules/typeorm/cli.js migration:run",
     "migration:create": "ts-node --project ./tsconfig.json --transpile-only ./node_modules/typeorm/cli.js migration:create",
@@ -72,5 +72,8 @@
     "reflect-metadata": "^0.1.13",
     "sass": "^1.35.1",
     "typeorm": "^0.2.32"
+  },
+  "engines": {
+    "node": "14.x"
   }
 }

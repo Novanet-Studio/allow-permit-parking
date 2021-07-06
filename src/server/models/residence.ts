@@ -7,8 +7,10 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import type { ESW } from '../../@types/esw';
 import Building from './building';
+import ParkingSlot from './parking-slot';
+
+import type { ESW } from '../../@types/esw';
 
 @Entity({ name: 'residences' })
 export default class Residence {
@@ -37,8 +39,11 @@ export default class Residence {
   })
   public updatedAt: Date;
 
-  @OneToMany(() => Building, (building) => building.residenceId)
+  @OneToMany(() => Building, (building) => building.residence)
   public buildings: Building[];
+
+  @OneToMany(() => ParkingSlot, (parkingSlot) => parkingSlot.residence)
+  public slots: ParkingSlot[];
 
   public toPresentationLayer(): ESW.Residence {
     return {

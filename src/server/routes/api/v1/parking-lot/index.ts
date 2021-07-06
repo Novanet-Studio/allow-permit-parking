@@ -21,7 +21,7 @@ export default function (
         parkingLot.toPresentationLayer(),
       );
 
-      return httpResponse.created(reply, parkingLots);
+      return httpResponse.ok(reply, parkingLots);
     } catch (error) {
       return httpResponse.internalServerError(reply, error);
     }
@@ -42,7 +42,7 @@ export default function (
           request.params.id,
         );
 
-        return httpResponse.created(reply, parkingLot.toPresentationLayer());
+        return httpResponse.ok(reply, parkingLot.toPresentationLayer());
       } catch (error) {
         return httpResponse.internalServerError(reply, error);
       }

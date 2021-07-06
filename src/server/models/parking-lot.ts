@@ -40,10 +40,10 @@ export default class ParkingLot {
   })
   public updatedAt: Date;
 
-  @OneToMany(() => ParkingSlot, (parkingSlot) => parkingSlot.parkingLotId)
-  public slots: ParkingSlot[];
-
   @ManyToOne(() => Building, (building) => building.lots)
+  building: Building;
+
+  @Column({ nullable: false })
   buildingId: string;
 
   public toPresentationLayer(): ESW.ParkingLot {

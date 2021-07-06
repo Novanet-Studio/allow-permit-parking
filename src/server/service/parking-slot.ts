@@ -2,34 +2,34 @@ import { getRepository } from 'typeorm';
 
 import ParkingSlot, { ParkingType } from '../models/parking-slot';
 import { ParkingSlotWithIDNotFound } from '../error/parking-slot.service';
-
-import type { IParkingLotService } from './parking-lot';
+import { IResidenceService } from './residence';
 
 export type CreateParkingSlotDTO = {
   name: string;
   parkingType: string;
-  parkingLotId: string;
+  isAvailable: boolean;
+  residenceId: string;
 };
 
 export type UpdatedParkingSlotDTO = {
   id: string;
-  parkingLotId: string;
   name?: string;
+  isAvailable?: boolean;
 };
 
 export interface IParkingSlotService {
   getAll(): Promise<ParkingSlot[]>;
-  create(parkingLotId: string, dto: CreateParkingSlotDTO): Promise<ParkingSlot>;
+  create(residenceId: string, dto: CreateParkingSlotDTO): Promise<ParkingSlot>;
   update(dto: UpdatedParkingSlotDTO): Promise<ParkingSlot>;
   remove(id: string): Promise<ParkingSlot>;
   findById(id: string): Promise<ParkingSlot | null>;
 }
 
 export default class ParkingSlotService implements IParkingSlotService {
-  private parkingLotService: IParkingLotService;
+  private residenceService: IResidenceService;
 
-  constructor(parkingSlotService: IParkingLotService) {
-    this.parkingLotService = parkingSlotService;
+  constructor(residenceService: IResidenceService) {
+    this.residenceService = residenceService;
   }
 
   async getAll(): Promise<ParkingSlot[]> {
@@ -40,16 +40,17 @@ export default class ParkingSlotService implements IParkingSlotService {
   }
 
   async create(
-    parkingLotId: string,
+    residenceId: string,
     dto: CreateParkingSlotDTO,
   ): Promise<ParkingSlot> {
     const parkingSlotRepository = getRepository(ParkingSlot);
-    const parkingLot = await this.parkingLotService.findById(parkingLotId);
+    const residence = await this.residenceService.findById(residenceId);
     const parkingSlot = new ParkingSlot();
 
     parkingSlot.name = dto.name;
     parkingSlot.parkingType = dto.parkingType as ParkingType;
-    parkingSlot.parkingLotId = parkingLot.id;
+    parkingSlot.isAvailable = dto.isAvailable;
+    parkingSlot.residenceId = residence.id;
 
     const createdParkingSlot = await parkingSlotRepository.save(parkingSlot);
 
@@ -58,11 +59,10 @@ export default class ParkingSlotService implements IParkingSlotService {
 
   async update(dto: UpdatedParkingSlotDTO): Promise<ParkingSlot> {
     const parkingSlotRepository = getRepository(ParkingSlot);
-    const parkingLot = await this.parkingLotService.findById(dto.parkingLotId);
     const parkingSlot = await this.findById(dto.id);
 
     parkingSlot.name = dto.name;
-    parkingSlot.parkingLotId = parkingLot.id;
+    parkingSlot.isAvailable = dto.isAvailable;
 
     await parkingSlotRepository.update(dto.id, parkingSlot);
 

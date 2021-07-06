@@ -41,8 +41,8 @@ declare namespace ESW {
   interface ParkingSlot {
     id: string;
     name: string;
+    residenceId: string;
     parkingType: ParkingType;
-    parkingLotId: string;
     createdAt: Date;
     updateAt: Date;
   }

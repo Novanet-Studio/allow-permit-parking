@@ -1,4 +1,5 @@
 import React from 'react';
+import { useRouter } from 'next/router';
 
 type Props = {
   icon: string;
@@ -17,18 +18,23 @@ export default function Card({
   manageText,
   manageLink,
 }: Props): JSX.Element {
+  const router = useRouter();
+
+  const handleAddRoute = () => router.replace(addLink);
+  const handleManagerRoute = () => router.replace(manageLink);
+
   return (
     <li className="card__box">
       <div className="card__heading">
         <img className="card__icon" src={icon} alt="dashboard icon" />
         <h3 className="card__title">{title}</h3>
       </div>
-      <a className="card__link" href={addLink}>
+      <div className="card__link" onClick={handleAddRoute}>
         {addText}
-      </a>
-      <a className="card__link" href={manageLink}>
+      </div>
+      <div className="card__link" onClick={handleManagerRoute}>
         {manageText}
-      </a>
+      </div>
     </li>
   );
 }
