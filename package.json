@@ -14,7 +14,7 @@
     "eslint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "fmt": "eslint . --ext .js,.jsx,.ts,.tsx --fix && prettier --write \"**/*.{json,md,yml,ts,tsx,js,jsx}\"",
     "prettier": "prettier -c \"**/*.{md,json,yml,sh}\"",
-    "start": "NEXT_TELEMETRY_DISABLED=1 node ./dist/main.js",
+    "start": "ts-node src/main.ts",
     "test": "jest",
     "migration:run": "ts-node --project ./tsconfig.json --transpile-only ./node_modules/typeorm/cli.js migration:run",
     "migration:create": "ts-node --project ./tsconfig.json --transpile-only ./node_modules/typeorm/cli.js migration:create",
