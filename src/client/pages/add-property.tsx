@@ -116,9 +116,8 @@ export default function AddProperty(): JSX.Element {
           const input = el.children[1] as HTMLInputElement;
           const isButton = !el.className.includes('button');
           const name = label.textContent.toLowerCase();
-          const value = input.value;
 
-          const schema = isButton ? { name, value } : null;
+          const schema = isButton ? { name, value: input.value } : null;
 
           return schema;
         }),
