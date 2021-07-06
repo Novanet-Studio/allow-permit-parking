@@ -29,7 +29,7 @@ export default function Home(): JSX.Element {
           addText="Add a property"
           addLink="/add-property"
           manageText="Manage properties"
-          manageLink="/manage-property"
+          manageLink="/properties"
         />
         <Card
           title="Parking"
