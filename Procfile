@@ -1,0 +1,1 @@
+web: yarn run build:production && yarn start
