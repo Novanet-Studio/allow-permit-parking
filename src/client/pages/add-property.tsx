@@ -57,7 +57,7 @@ export default function AddProperty(): JSX.Element {
     // handleInputChange,
     handleClick,
     handleRemove,
-    // reset,
+    reset,
   } = useGenerateInput<{ type: string; value: string }>({
     type: '',
     value: '',
@@ -83,12 +83,14 @@ export default function AddProperty(): JSX.Element {
       const dataResponse = response.map((value) => value.data);
 
       updateBuildings(dataResponse);
+      reset();
 
       closeModal();
     } catch (error) {
       throw new Error(error);
     } finally {
       closeModal();
+      reset();
     }
   };
 
@@ -156,6 +158,7 @@ export default function AddProperty(): JSX.Element {
     );
 
     const response = await Promise.all(parkingSlots);
+    console.log(response);
     const parkingSlotResponse = response.map((value) => value.data);
 
     if (parkingSlotResponse.length) {

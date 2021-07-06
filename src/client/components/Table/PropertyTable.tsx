@@ -4,7 +4,7 @@ import useModal from '../../hooks/use-modal';
 import useParkingLot from '../../hooks/use-parking-lot';
 import { PropertyModal } from '../Modal';
 
-import type { ESW } from '../../@types/esw';
+import type { ESW } from '../../../@types/esw';
 
 type Props = {
   headings: string[];

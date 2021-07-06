@@ -54,8 +54,16 @@ export default function PropertyModal({
     setInputs([...inputs, { name: '' }]);
   };
 
+  const reset = () => setInputs(initialState);
+
   return (
-    <Modal {...props} onUpdate={(e) => props.onUpdate(e, inputs)}>
+    <Modal
+      {...props}
+      onUpdate={(e) => {
+        props.onUpdate(e, inputs);
+        reset();
+      }}
+    >
       <form className="form form--one-column">
         {inputs.map((input, index) => (
           <div className="form__group form__group--full" key={index}>

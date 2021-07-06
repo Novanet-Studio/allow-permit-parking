@@ -52,7 +52,7 @@ export default function (
 
   fastify.post(
     '/:id',
-    { schema: validationSchema.createParkingLotSchema },
+    { schema: validationSchema.createParkingSlotSchema },
     async (
       request: FastifyRequest<{
         Params: {
@@ -79,7 +79,7 @@ export default function (
 
   fastify.put(
     '/:id',
-    { schema: validationSchema.updateParkingLotSchema },
+    { schema: validationSchema.updateParkingSlotSchema },
     async (
       request: FastifyRequest<{
         Params: {
