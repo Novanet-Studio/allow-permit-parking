@@ -33,34 +33,31 @@ type PropertyForm = {
 };
 
 const AppRequestConfig: AxiosRequestConfig = {
-  baseURL:
-    process.env.NODE_ENV === 'production'
-      ? 'https://allow-permit-parking.herokuapp.com/api/v1/'
-      : 'http://localhost:3000/api/v1/',
   method: 'POST',
 };
 
 export default function AddProperty(): JSX.Element {
   const [isAdded, setIsAdded] = useState(false);
+  const [buildings, setBuildings] = useState(null);
   const div = useRef<HTMLDivElement>();
   const startingContinous = useRef<HTMLInputElement>();
   const endingContinous = useRef<HTMLInputElement>();
   const router = useRouter();
-  const { response, execute, isLoading } = useRequest(AppRequestConfig);
+  const { execute, isLoading } = useRequest(AppRequestConfig);
   const { user } = useUser();
   const { openModal, isOpenModal, closeModal } = useModal(false);
-  const { response: property, createProperty } = useProperty();
+  const { response: property, createProperty } = useProperty<ESW.Residence>();
   const {
-    buildings,
+    buildings: allBuildings,
     updateBuildings,
     createBuilding,
   } = useBuilding<ESW.Building>();
   const {
     inputs,
-    handleInputChange,
+    // handleInputChange,
     handleClick,
     handleRemove,
-    reset,
+    // reset,
   } = useGenerateInput<{ type: string; value: string }>({
     type: '',
     value: '',
@@ -76,7 +73,7 @@ export default function AddProperty(): JSX.Element {
   });
 
   const onUpdateBuilding = async (e, data: [{ name: string }]) => {
-    const residence = property as ESW.Residence;
+    const residence = property;
     try {
       const buildings = data.map(
         async (data) => await createBuilding(residence.id, { name: data.name }),
@@ -96,7 +93,7 @@ export default function AddProperty(): JSX.Element {
   };
 
   const handleOnAddProperty = async () => {
-    const residence = property as ESW.Residence;
+    const residence = property;
     const parkingSlotsArr = [];
     const continuosRange = range({
       starting: Number(startingContinous.current.value),
@@ -171,6 +168,20 @@ export default function AddProperty(): JSX.Element {
     if (user === null) {
       router.replace('/login');
     }
+
+    const getBuildingsById = () => {
+      if (!property) {
+        return;
+      }
+
+      const buildingsFiltred = allBuildings.filter(
+        (building) => building.residenceId === property.id,
+      );
+
+      setBuildings(buildingsFiltred);
+    };
+
+    getBuildingsById();
   }, [router, user]);
 
   if (isAdded) {
