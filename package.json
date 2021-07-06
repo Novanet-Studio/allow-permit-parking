@@ -18,9 +18,7 @@
     "test": "jest",
     "migration:run": "ts-node --project ./tsconfig.json --transpile-only ./node_modules/typeorm/cli.js migration:run",
     "migration:create": "ts-node --project ./tsconfig.json --transpile-only ./node_modules/typeorm/cli.js migration:create",
-    "migration:generate": "ts-node --project ./tsconfig.json --transpile-only ./node_modules/typeorm/cli.js migration:generate",
-    "heroku-postbuild": "yarn install",
-    "postinstall": "yarn build:production"
+    "migration:generate": "ts-node --project ./tsconfig.json --transpile-only ./node_modules/typeorm/cli.js migration:generate"
   },
   "devDependencies": {
     "@types/axios": "^0.14.0",
