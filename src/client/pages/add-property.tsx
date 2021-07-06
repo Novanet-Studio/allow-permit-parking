@@ -182,7 +182,7 @@ export default function AddProperty(): JSX.Element {
     };
 
     getBuildingsById();
-  }, [router, user]);
+  }, [router, user, allBuildings]);
 
   if (isAdded) {
     alert('New property added!');
