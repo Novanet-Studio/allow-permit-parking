@@ -102,22 +102,23 @@ export default function AddProperty(): JSX.Element {
       starting: Number(startingContinous.current.value),
       ending: Number(endingContinous.current.value),
     });
-    const children = [...div.current.children];
+    const children = [
+      ...((div.current.children as unknown) as HTMLDivElement[]),
+    ];
 
     parkingSlotsArr.push(...continuosRange);
 
     const elements = children
       .map((item) => item.children)
       .map((item) =>
-        [...item].map((el) => {
+        [...((item as unknown) as HTMLElement[])].map((el) => {
           const label = el.children[0] as HTMLLabelElement;
           const input = el.children[1] as HTMLInputElement;
-          const schema = !el.className.includes('button')
-            ? {
-                name: label.textContent.toLowerCase(),
-                value: input.value,
-              }
-            : null;
+          const isButton = !el.className.includes('button');
+          const name = label.textContent.toLowerCase();
+          const value = input.value;
+
+          const schema = isButton ? { name, value } : null;
 
           return schema;
         }),
