@@ -7,7 +7,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import ParkingLot from './parking-lot';
+import Residence from './residence';
 
 import type { ESW } from '../../@types/esw';
 
@@ -36,6 +36,13 @@ export default class ParkingSlot {
   })
   parkingType: ParkingType;
 
+  @Column({
+    type: 'boolean',
+    default: false,
+    nullable: false,
+  })
+  isAvailable: boolean;
+
   @CreateDateColumn({
     name: 'created_at',
     type: 'timestamp',
@@ -51,8 +58,11 @@ export default class ParkingSlot {
   })
   public updatedAt: Date;
 
-  @ManyToOne(() => ParkingLot, (parkingLot) => parkingLot.slots)
-  public parkingLotId: string;
+  @ManyToOne(() => Residence, (residence) => residence.slots)
+  public residence: Residence;
+
+  @Column({ nullable: false })
+  residenceId: string;
 
   public isAllowed(requiredParkingTypes: ParkingType[]): boolean {
     return requiredParkingTypes.includes(this.parkingType);
@@ -63,7 +73,7 @@ export default class ParkingSlot {
       id: this.id,
       name: this.name,
       parkingType: this.parkingType,
-      parkingLotId: this.parkingLotId,
+      residenceId: this.residenceId,
       createdAt: this.createdAt,
       updateAt: this.updatedAt,
     };

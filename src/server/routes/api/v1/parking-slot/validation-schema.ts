@@ -4,7 +4,7 @@ export default {
   createParkingSlotSchema: {
     body: {
       type: 'object',
-      required: ['name', 'parkingType'],
+      required: ['name', 'parkingType', 'isAvailable'],
       properties: {
         name: {
           type: 'string',
@@ -12,16 +12,22 @@ export default {
         parkingType: {
           type: 'string',
         },
+        isAvailable: {
+          type: 'boolean',
+        },
       },
     },
   },
   updateParkingSlotSchema: {
     body: {
       type: 'object',
-      required: ['name'],
+      required: ['name', 'isAvailable'],
       properties: {
         name: {
           type: 'string',
+        },
+        isAvailable: {
+          type: 'boolean',
         },
       },
     },

@@ -41,7 +41,10 @@ export default class Building {
   public updatedAt: Date;
 
   @ManyToOne(() => Residence, (residence) => residence.buildings)
-  public residenceId: string;
+  public residence: Residence;
+
+  @Column({ nullable: false })
+  residenceId: string;
 
   @OneToMany(() => ParkingLot, (parkingLot) => parkingLot.buildingId)
   public lots: ParkingLot[];

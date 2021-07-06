@@ -7,6 +7,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+
 import Driver from './driver';
 
 import type { ESW } from '../../@types/esw';
@@ -61,7 +62,10 @@ export default class Vehicle {
 
   @ManyToMany(() => Driver, (driver) => driver.id)
   @JoinTable()
-  public driverId: string;
+  public driver: Driver[];
+
+  @Column({ nullable: false })
+  driverId: string;
 
   public toPresentationLayer(): ESW.Vehicle {
     return {

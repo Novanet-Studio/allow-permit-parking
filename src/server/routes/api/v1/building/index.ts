@@ -26,7 +26,7 @@ export default function (
         building.toPresentationLayer(),
       );
 
-      return httpResponse.created(reply, buildings);
+      return httpResponse.ok(reply, buildings);
     } catch (error) {
       return httpResponse.internalServerError(reply, error);
     }
@@ -47,7 +47,7 @@ export default function (
           request.params.id,
         );
 
-        return httpResponse.created(reply, building.toPresentationLayer());
+        return httpResponse.ok(reply, building.toPresentationLayer());
       } catch (error) {
         return httpResponse.internalServerError(reply, error);
       }
