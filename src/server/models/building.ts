@@ -22,6 +22,7 @@ export default class Building {
     type: 'varchar',
     length: 200,
     nullable: false,
+    unique: true,
   })
   name: string;
 
