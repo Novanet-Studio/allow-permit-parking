@@ -1,10 +1,19 @@
 import { useCallback, useState } from 'react';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 
 import type { AxiosResponse, AxiosRequestConfig } from 'axios';
 
+type DBError = {
+  message: string;
+  error: {
+    detail: string;
+    message: string;
+    table: string;
+  }
+}
+
 export interface UseRequestHook<T> {
-  error: Error | null;
+  error: AxiosError<Error & DBError> | null;
   execute(
     uri: string,
     data?: unknown,
@@ -18,7 +27,7 @@ export default function useRequest<T>(
   params: AxiosRequestConfig,
 ): UseRequestHook<T> {
   const [response, setResponse] = useState<T | null>(null);
-  const [error, setError] = useState<Error | null>(null);
+  const [error, setError] = useState<AxiosError | null>(null);
   const [isLoading, setLoading] = useState<boolean>(false);
 
   const execute = useCallback(

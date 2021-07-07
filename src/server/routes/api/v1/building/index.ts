@@ -1,6 +1,7 @@
 import httpResponse from '../../../../utils/http-response';
 import validationSchema from './validation-schema';
 import { ResidenceWithIDNotFound } from '../../../../error/residence.service';
+import { BuildingWithIDNotFound } from '../../../../error/building.service';
 
 import type {
   FastifyError,
@@ -77,6 +78,32 @@ export default function (
         return httpResponse.created(reply, building.toPresentationLayer());
       } catch (error) {
         if (error instanceof ResidenceWithIDNotFound) {
+          return httpResponse.badRequestMessage(reply, error.message, error);
+        }
+
+        return httpResponse.internalServerError(reply, error);
+      }
+    },
+  );
+
+  fastify.delete(
+    '/:id',
+    async (
+      request: FastifyRequest<{
+        Params: {
+          id: string;
+        };
+      }>,
+      reply: FastifyReply,
+    ) => {
+      try {
+        const removed = await fastify.services.building.remove(
+          request.params.id,
+        );
+
+        return httpResponse.ok(reply, removed.toPresentationLayer());
+      } catch (error) {
+        if (error instanceof BuildingWithIDNotFound) {
           return httpResponse.badRequestMessage(reply, error.message, error);
         }
 

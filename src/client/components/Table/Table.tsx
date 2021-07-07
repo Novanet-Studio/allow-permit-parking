@@ -1,7 +1,7 @@
-import React from "react";
+import React from 'react';
 
-import listIcon from "../../assets/images/app_icon_list.svg";
-import pencilIcon from "../../assets/images/app_icon_pencil.svg";
+import listIcon from '../../assets/images/app_icon_list.svg';
+import pencilIcon from '../../assets/images/app_icon_pencil.svg';
 
 type TableData = {
   propertyName: string;
@@ -9,7 +9,7 @@ type TableData = {
   apartments: number;
   parkingSpaces: number;
   visitorSpaces: number;
-}
+};
 
 type Props = {
   headings: string[];
@@ -38,15 +38,13 @@ export default function Table<T>({ headings, data }: Props): JSX.Element {
           <li className="table__data">{item.parkingSpaces}</li>
           <li className="table__data">{item.visitorSpaces}</li>
           <li className="table__data">
-            <a href="property_manage.html">
+            <a href="">
               <button className="button button--table button--orange">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img className="button__icon" src={listIcon} alt="list icon" />
               </button>
             </a>
-            <a href="property_detail.html">
+            <a href="">
               <button className="button button--table button--green">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   className="button__icon"
                   src={pencilIcon}

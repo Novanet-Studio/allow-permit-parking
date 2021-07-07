@@ -89,7 +89,7 @@ export default function Properties(): JSX.Element {
         iconAlt="properties icon"
       >
         <button className="button button--gray">
-          <a className="button--gray__link" href="property_add.html">
+          <a className="button--gray__link" href="">
             Add a property
           </a>
         </button>

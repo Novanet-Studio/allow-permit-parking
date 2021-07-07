@@ -1,17 +1,19 @@
 import React from 'react';
 
+import { PropertyModal } from '../Modal';
+
 import useModal from '../../hooks/use-modal';
 import useParkingLot from '../../hooks/use-parking-lot';
-import { PropertyModal } from '../Modal';
 
 import type { ESW } from '../../../@types/esw';
 
 type Props = {
   headings: string[];
   data: ESW.Building[];
+  onRemoveBuilding: (id: string) => void;
 };
 
-export default function PropertyTable({ headings, data }: Props): JSX.Element {
+export default function PropertyTable({ headings, data, onRemoveBuilding }: Props): JSX.Element {
   const {
     isOpenById,
     openModalById,
@@ -20,7 +22,7 @@ export default function PropertyTable({ headings, data }: Props): JSX.Element {
   } = useModal(false);
   const { createParkingLot } = useParkingLot();
 
-  const onUpdateApartments = async (
+  const onAddApartments = async (
     e,
     data: [{ name: string }],
     parkingLotId: string,
@@ -33,8 +35,6 @@ export default function PropertyTable({ headings, data }: Props): JSX.Element {
 
       const response = await Promise.all(parkingLots);
       const dataResponse = response.map((value) => value.data);
-
-      console.log(dataResponse);
 
       closeAllModals();
     } catch (error) {
@@ -68,14 +68,22 @@ export default function PropertyTable({ headings, data }: Props): JSX.Element {
               <a className="button__link">Add</a>
             </button>
           </li>
+          <li className="table__data">
+            <button
+              style={{ backgroundColor: '#e83939' }}
+              className="button button--table"
+              onClick={() => onRemoveBuilding(building.id)}
+            >
+              &times;
+            </button>
+          </li>
           <PropertyModal
-            title="Add apartments"
+            title={`Add apartments for ${building.name}`}
             inputLabel="Apartment name"
-            buttonText="Add apartment"
             isOpenModal={isOpenById[building.id]}
             closeModal={() => closeModalById(building.id)}
             onUpdate={(e, data: [{ name: string }]) =>
-              onUpdateApartments(e, data, building.id)
+              onAddApartments(e, data, building.id)
             }
             key={Date.now()}
           />

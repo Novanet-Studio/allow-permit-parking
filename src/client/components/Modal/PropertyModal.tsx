@@ -11,7 +11,6 @@ import type { MouseEvent, ChangeEvent } from 'react';
 type Props = {
   title: string;
   inputLabel: string;
-  buttonText: string;
   isOpenModal: boolean;
   onUpdate(event: MouseEvent<HTMLSpanElement>, data?: unknown): void;
   closeModal: () => void;
@@ -29,7 +28,6 @@ const initialState = [
 
 export default function PropertyModal({
   inputLabel,
-  buttonText,
   ...props
 }: Props): JSX.Element {
   const [inputs, setInputs] = useState<BuildingForm[]>(initialState);
@@ -63,27 +61,34 @@ export default function PropertyModal({
         props.onUpdate(e, inputs);
         reset();
       }}
+      showButtons={true}
     >
       <form className="form form--one-column">
         {inputs.map((input, index) => (
           <div className="form__group form__group--full" key={index}>
             <label className="form__label">{inputLabel}</label>
-            <input
-              name="name"
-              className="form__input"
-              type="text"
-              value={input.name}
-              onChange={(e) => handleInputChange(e, index)}
-            />
-            {inputs.length !== 1 && (
-              <button
-                className="button button--plus"
-                type="button"
-                onClick={() => handleRemove(index)}
-              >
-                <img className="plus__icon" src={deleteIcon} alt="add icon" />
-              </button>
-            )}
+            <div style={{ display: 'flex' }}>
+              <input
+                name="name"
+                className="form__input"
+                type="text"
+                value={input.name}
+                onChange={(e) => handleInputChange(e, index)}
+              />
+              {inputs.length !== 1 && (
+                <button
+                  className="button button--plus"
+                  type="button"
+                  onClick={() => handleRemove(index)}
+                >
+                  <img
+                    className="plus__icon"
+                    src={deleteIcon}
+                    alt="add icon"
+                  />
+                </button>
+              )}
+            </div>
           </div>
         ))}
 
@@ -97,12 +102,6 @@ export default function PropertyModal({
               <img className="plus__icon" src={addIcon} alt="add icon" />
             </button>
           </div>
-        </div>
-
-        <div className="form__group form__group--full">
-          <Button mode="top" type="button">
-            {buttonText}
-          </Button>
         </div>
       </form>
     </Modal>

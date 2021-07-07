@@ -5,6 +5,7 @@ import { useFormik } from 'formik';
 import * as F from '../components/Form';
 import { PropertyTable } from '../components/Table';
 import Button from '../components/Button';
+import Success from '../components/Success';
 import Dropdown from '../components/Dropdown';
 import Subheader from '../components/Subheader';
 import Breadcrumb from '../components/Breadcrumb';
@@ -17,7 +18,6 @@ import useUser from '../hooks/use-user';
 import useModal from '../hooks/use-modal';
 import useRequest from '../hooks/use-request';
 import useProperty from '../hooks/use-property';
-import useBuilding from '../hooks/use-building';
 import useGenerateInput from '../hooks/use-generate-input';
 import range from '../utils/range';
 
@@ -26,6 +26,8 @@ import deleteIcon from '../assets/images/app_icon_delete.svg';
 
 import type { AxiosRequestConfig } from 'axios';
 import type { ESW } from '../../@types/esw';
+
+type RequestType = ESW.Building;
 
 type PropertyForm = {
   name: string;
@@ -40,19 +42,17 @@ const AppRequestConfig: AxiosRequestConfig = {
 export default function AddProperty(): JSX.Element {
   const [isAdded, setIsAdded] = useState(false);
   const [buildings, setBuildings] = useState(null);
+  const [residence, setResidence] = useState(null);
   const div = useRef<HTMLDivElement>();
   const startingContinous = useRef<HTMLInputElement>();
   const endingContinous = useRef<HTMLInputElement>();
   const router = useRouter();
-  const { execute, isLoading } = useRequest(AppRequestConfig);
+  const { execute, isLoading, error } = useRequest<RequestType>(
+    AppRequestConfig,
+  );
   const { user } = useUser();
   const { openModal, isOpenModal, closeModal } = useModal(false);
   const { response: property, createProperty } = useProperty<ESW.Residence>();
-  const {
-    buildings: allBuildings,
-    updateBuildings,
-    createBuilding,
-  } = useBuilding<ESW.Building>();
   const {
     inputs,
     // handleInputChange,
@@ -69,31 +69,50 @@ export default function AddProperty(): JSX.Element {
       systemType: 'permit',
     },
     onSubmit: async (values: PropertyForm) => {
-      await createProperty({ ...values });
+      const response = await execute('/residence', { ...values });
+      const data = await response.data;
+      setResidence(data);
     },
   });
 
+  const errorObject = error?.response.data.error;
+  const errors = {
+    property: 'Property already exists',
+    building: '',
+  };
+
+  const hasError = (table: string, type: string, message: string) => {
+    if (
+      errorObject.detail.includes('already exists') &&
+      errorObject.table === table
+    ) {
+      errors[type] = message;
+      setTimeout(() => {
+        errors[type] = '';
+      }, 3000);
+    }
+
+    return false;
+  };
+
   const onUpdateBuilding = async (e, data: [{ name: string }]) => {
-    const residence = property;
     try {
       const buildings = data.map(
-        async (data) => await createBuilding(residence.id, { name: data.name }),
+        async (data) =>
+          await execute(`building/${residence.id}`, { name: data.name }),
       );
 
-      const response = await Promise.all(buildings);
-      const dataResponse = response.map((value) => value.data);
+      const apiResponse = await Promise.all(buildings);
+      const buildingResponse = apiResponse.map((value) => value.data);
 
-      updateBuildings(dataResponse);
-      reset();
-
-      closeModal();
+      setBuildings(buildingResponse);
     } catch (error) {
       throw new Error(error);
     } finally {
       closeModal();
       reset();
     }
-  };
+  };  
 
   const handleOnAddProperty = async () => {
     const residence = property;
@@ -163,34 +182,50 @@ export default function AddProperty(): JSX.Element {
     const parkingSlotResponse = response.map((value) => value.data);
 
     if (parkingSlotResponse.length) {
-      console.log(parkingSlotResponse);
       setIsAdded(true);
     }
   };
+
+  const onRemoveBuilding = async (id: string) => {
+    await execute(`building/${id}`, null, { method: 'DELETE' });
+    const response = await execute('building', null, { method: 'GET' });
+    const buildingList = await response.data;
+    setBuildings(buildingList);
+  };
+
+  const filterBuildingById = (buildings: ESW.Building[]) => {
+    if (!residence || !buildings) {
+      return;
+    }
+
+    console.log({ buildings });
+
+    const buildingsFiltred = buildings.filter(
+      (building) => building.residenceId === residence.id,
+    );
+
+    return buildingsFiltred;
+  };
+
+  if (error) {
+    if (errorObject.detail.includes(formik.values.name)) {
+      formik.errors.name = errors.property;
+      setTimeout(() => {
+        formik.errors.name = '';
+      }, 3000);
+    }
+
+    hasError('buildings', 'building', 'Building already exists');
+  }
 
   useEffect(() => {
     if (user === null) {
       router.replace('/login');
     }
-
-    const getBuildingsById = () => {
-      if (!property) {
-        return;
-      }
-
-      const buildingsFiltred = allBuildings.filter(
-        (building) => building.residenceId === property.id,
-      );
-
-      setBuildings(buildingsFiltred);
-    };
-
-    getBuildingsById();
-  }, [router, user, allBuildings]);
+  }, [router, user]);
 
   if (isAdded) {
-    alert('New property added!');
-    router.replace('/');
+    return <Success isSuccess={true} />;
   }
 
   return (
@@ -230,14 +265,15 @@ export default function AddProperty(): JSX.Element {
 
         <HeadingTable title="Set apartments" />
         <PropertyTable
-          headings={['Building ID', 'Apartments']}
-          data={buildings}
+          headings={['Building ID', 'Apartments', 'Actions']}
+          data={filterBuildingById(buildings)}
+          onRemoveBuilding={onRemoveBuilding}
         />
+        <F.Feedback text={errors.building} />
         <Button mode="plus" onClick={() => openModal()} />
         <PropertyModal
           title="Add building"
           inputLabel="Building name"
-          buttonText="Add building"
           isOpenModal={isOpenModal}
           closeModal={closeModal}
           onUpdate={onUpdateBuilding}

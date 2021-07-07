@@ -12,6 +12,7 @@ export type CreateBuildingDTO = {
 export interface IBuildingService {
   getAll(): Promise<Building[]>;
   create(residenceId: string, dto: CreateBuildingDTO): Promise<Building>;
+  remove(id: string): Promise<Building>;
   findById(id: string): Promise<Building>;
 }
 
@@ -40,6 +41,14 @@ export default class BuildingService implements IBuildingService {
     const createdBuilding = await buildingRepository.save(building);
 
     return createdBuilding;
+  }
+
+  async remove(id: string): Promise<Building> {
+    const buildingRepository = getRepository(Building);
+    const building = await this.findById(id);
+    await buildingRepository.delete({ id });
+
+    return building;
   }
 
   async findById(id: string): Promise<Building> {

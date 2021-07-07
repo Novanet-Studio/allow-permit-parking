@@ -6,6 +6,7 @@ type Props = {
   isOpenModal: boolean;
   closeModal: () => void;
   children: JSX.Element | JSX.Element[];
+  showButtons?: boolean;
 };
 
 export default function Modal({
@@ -14,6 +15,7 @@ export default function Modal({
   closeModal,
   children,
   onUpdate,
+  showButtons = false,
 }: Props): JSX.Element {
   return (
     <div className={`modal ${isOpenModal ? 'modal--show' : ''}`}>
@@ -22,14 +24,16 @@ export default function Modal({
           <h2 className="modal__title">{title}</h2>
         </div>
         <div className="modal__body">{children}</div>
-        <div className="modal__footer">
-          <span className="modal__span modal__cancel" onClick={closeModal}>
-            cancel
-          </span>
-          <span className="modal__span modal__update" onClick={onUpdate}>
-            update
-          </span>
-        </div>
+        {showButtons && (
+          <div className="modal__footer">
+            <span className="modal__span modal__cancel" onClick={closeModal}>
+              cancel
+            </span>
+            <span className="modal__span modal__update" onClick={onUpdate}>
+              update
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );
