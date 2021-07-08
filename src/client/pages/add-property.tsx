@@ -17,7 +17,6 @@ import { PropertyModal } from '../components/Modal';
 import useUser from '../hooks/use-user';
 import useModal from '../hooks/use-modal';
 import useRequest from '../hooks/use-request';
-import useProperty from '../hooks/use-property';
 import useGenerateInput from '../hooks/use-generate-input';
 import range from '../utils/range';
 
@@ -68,30 +67,19 @@ export default function AddProperty(): JSX.Element {
       systemType: 'permit',
     },
     onSubmit: async (values: PropertyForm) => {
-      const response = await execute('/residence', { ...values });
-      const data = await response?.data;
-      setResidence(data);
+      try {
+        const response = await execute('/residence', { ...values });
+        const data = await response?.data;
+        setResidence(data);
+      } catch (error) {
+        console.log(error);
+      }
     },
   });
 
-  const errorObject = error?.response.data.error;
   const errors = {
     property: 'Property already exists',
     building: '',
-  };
-
-  const hasError = (table: string, type: string, message: string) => {
-    if (
-      errorObject.detail.includes('already exists') &&
-      errorObject.table === table
-    ) {
-      errors[type] = message;
-      setTimeout(() => {
-        errors[type] = '';
-      }, 3000);
-    }
-
-    return false;
   };
 
   const onUpdateBuilding = async (e, data: [{ name: string }]) => {
@@ -111,7 +99,7 @@ export default function AddProperty(): JSX.Element {
       closeModal();
       reset();
     }
-  };  
+  };
 
   const handleOnAddProperty = async () => {
     const parkingSlotsArr = [];
@@ -203,22 +191,22 @@ export default function AddProperty(): JSX.Element {
     return buildingsFiltred;
   };
 
-  if (error) {
-    if (errorObject.detail.includes(formik.values.name)) {
-      formik.errors.name = errors.property;
-      setTimeout(() => {
-        formik.errors.name = '';
-      }, 3000);
-    }
-
-    hasError('buildings', 'building', 'Building already exists');
-  }
-
   useEffect(() => {
     if (user === null) {
       router.replace('/login');
     }
-  }, [router, user]);
+
+    if (error) {
+      const errorObject = error.response.data.error;
+      if (errorObject.detail.includes(formik.values.name)) {
+        formik.setErrors({ name: 'Property already exists' });
+        setTimeout(() => {
+          console.log('remove property name error');
+          formik.setErrors({ name: '' });
+        }, 3000);
+      }
+    }
+  }, [router, user, error]);
 
   if (isAdded) {
     return <Success isSuccess={true} />;
