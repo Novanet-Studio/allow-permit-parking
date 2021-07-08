@@ -72,7 +72,7 @@ export default function AddProperty(): JSX.Element {
         const data = await response?.data;
         setResidence(data);
       } catch (error) {
-        console.log(error);
+        console.log({ error });
       }
     },
   });
@@ -197,6 +197,8 @@ export default function AddProperty(): JSX.Element {
     }
 
     if (error) {
+      console.log('from useEffect: ', { error });
+      
       const errorObject = error.response.data.error;
       if (errorObject.detail.includes(formik.values.name)) {
         formik.setErrors({ name: 'Property already exists' });
