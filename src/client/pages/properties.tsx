@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 
 import Dashboard from '../components/DashboardLayout';
 import Breadcrumb from '../components/Breadcrumb';
@@ -35,7 +36,7 @@ export default function Properties(): JSX.Element {
         execute('api/v1/parking/slots'),
       ]);
 
-      const response = apiResponse.map((item) => item.data);
+      const response = apiResponse.map((item) => item?.data);
 
       const residences = response[0];
 
@@ -52,15 +53,20 @@ export default function Properties(): JSX.Element {
           .filter((build) => build.residenceId === residenceId)
           .map((item) => item.id);
 
+        const totalApartments = apartments.filter((apartment) =>
+          buildingId.includes(apartment.buildingId),
+        ).length;
+
+        const totalParkingSpaces = parkingSlots.filter(
+          (slot) => slot.residenceId === residenceId,
+        ).length;
+
         return {
+          id: residence.id,
           propertyName: residence.name,
           systemType: 'permit',
-          apartments: apartments.filter((apartment) =>
-            buildingId.includes(apartment.buildingId),
-          ).length,
-          parkingSpaces: parkingSlots.filter(
-            (slot) => slot.residenceId === residenceId,
-          ).length,
+          apartments: totalApartments,
+          parkingSpaces: totalParkingSpaces,
           visitorSpaces: 0,
         };
       });
@@ -89,9 +95,11 @@ export default function Properties(): JSX.Element {
         iconAlt="properties icon"
       >
         <button className="button button--gray">
-          <a className="button--gray__link" href="">
-            Add a property
-          </a>
+          <Link href="/add-property">
+            <a className="button--gray__link">
+              Add a property
+            </a>
+          </Link>
         </button>
       </Subheader>
 

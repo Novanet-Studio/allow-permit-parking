@@ -1,9 +1,8 @@
 import React from 'react';
 
 import { PropertyModal } from '../Modal';
-
 import useModal from '../../hooks/use-modal';
-import useParkingLot from '../../hooks/use-parking-lot';
+import useRequest from '../../hooks/use-request';
 
 import type { ESW } from '../../../@types/esw';
 
@@ -20,21 +19,22 @@ export default function PropertyTable({ headings, data, onRemoveBuilding }: Prop
     closeModalById,
     closeAllModals,
   } = useModal(false);
-  const { createParkingLot } = useParkingLot();
+  const { execute } = useRequest<ESW.ParkingLot>({
+    method: 'POST',
+  });
 
   const onAddApartments = async (
     e,
     data: [{ name: string }],
-    parkingLotId: string,
+    buildingId: string,
   ) => {
     try {
       const parkingLots = data.map(
         async (data) =>
-          await createParkingLot(parkingLotId, { name: data.name }),
-      );
+          await execute(`api/v1/parking/lots/${buildingId}`, { name: data.name }),
+      );      
 
-      const response = await Promise.all(parkingLots);
-      const dataResponse = response.map((value) => value.data);
+      await Promise.all(parkingLots);
 
       closeAllModals();
     } catch (error) {

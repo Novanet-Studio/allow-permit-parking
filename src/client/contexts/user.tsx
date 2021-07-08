@@ -15,6 +15,7 @@ export type Props = {
 
 export interface UserContext {
   user: ESW.User | null;
+  isLoading: boolean;
   login(email: string, password: string): Promise<void>;
   resumeSession(): Promise<void>;
 }
@@ -24,6 +25,7 @@ const UserContext = createContext<UserContext>(null);
 UserContext.displayName = 'UserContext';
 
 export function UserContextProvider({ children }: Props): JSX.Element {
+  const [isLoading, setIsLoading] = useState(false);
   const [user, setUser] = useState<ESW.User | null>(null);
 
   const openSession = (user: ESW.User) => {
@@ -37,6 +39,7 @@ export function UserContextProvider({ children }: Props): JSX.Element {
   };
 
   const login = async (email: string, password: string): Promise<void> => {
+    setIsLoading(true);
     const loginResponse = await axios.post(
       'api/auth/login',
       {},
@@ -55,14 +58,17 @@ export function UserContextProvider({ children }: Props): JSX.Element {
         const user = meResponse.data;
 
         openSession(user);
+        setIsLoading(false);
 
         return;
       }
 
+      setIsLoading(false);
       // TODO: Implement a dedicated error
       throw new Error('Failed to fetch user data');
     }
 
+    setIsLoading(false);
     // TODO: Implement a dedicated error
     throw new Error('Failed to authenticate');
   };
@@ -74,6 +80,8 @@ export function UserContextProvider({ children }: Props): JSX.Element {
       return;
     }
 
+    setIsLoading(true);
+
     const refreshTokenResponse = await axios.post('api/auth/refresh');
 
     if (refreshTokenResponse.status === 200) {
@@ -83,22 +91,26 @@ export function UserContextProvider({ children }: Props): JSX.Element {
         const user = meResponse.data;
 
         openSession(user);
+        setIsLoading(false);
 
         return;
       }
 
       closeSession();
+      setIsLoading(false);
 
       return;
     }
 
     closeSession();
+    setIsLoading(false);
   };
 
   return (
     <UserContext.Provider
       value={{
         user,
+        isLoading,
         login,
         resumeSession,
       }}

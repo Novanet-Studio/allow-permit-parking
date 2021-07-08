@@ -4,6 +4,7 @@ import type { ChangeEvent } from 'react';
 
 export interface UseGenerateInputHook<T> {
   inputs: T[] | null;
+  updateInputs: (inputs: T[]) => void; 
   handleInputChange: (
     event: ChangeEvent<HTMLInputElement>,
     index: number,
@@ -40,8 +41,11 @@ export default function useGenerateInput<T>(
     inputs?.length ? setInputs([...inputs, initial]) : setInputs([initial]);
   };
 
+  const updateInputs = (inputs) => setInputs(inputs);
+
   return {
     inputs,
+    updateInputs,
     handleInputChange,
     handleClick,
     handleRemove,

@@ -26,12 +26,17 @@ import deleteIcon from '../assets/images/app_icon_delete.svg';
 import type { AxiosRequestConfig } from 'axios';
 import type { ESW } from '../../@types/esw';
 
-type RequestType = ESW.Building;
+type RequestType = ESW.Building | ESW.Building[];
 
 type PropertyForm = {
   name: string;
   systemType: 'permit' | 'sticker';
 };
+
+type DataError = {
+  property?: string;
+  building?: string;
+}
 
 const AppRequestConfig: AxiosRequestConfig = {
   baseURL: '/api/v1',
@@ -40,7 +45,9 @@ const AppRequestConfig: AxiosRequestConfig = {
 
 export default function AddProperty(): JSX.Element {
   const [isAdded, setIsAdded] = useState(false);
-  const [buildings, setBuildings] = useState(null);
+  const [buildings, setBuildings] = useState<ESW.Building[]>([]);
+  const [buildingsData, setBuildingsData] = useState([]);
+  const [dataError, setDataError] = useState<DataError | null>(null);
   const [residence, setResidence] = useState(null);
   const div = useRef<HTMLDivElement>();
   const startingContinous = useRef<HTMLInputElement>();
@@ -77,24 +84,22 @@ export default function AddProperty(): JSX.Element {
     },
   });
 
-  const errors = {
-    property: 'Property already exists',
-    building: '',
-  };
-
   const onUpdateBuilding = async (e, data: [{ name: string }]) => {
     try {
+      const buildingsName = data.map(item => item.name);
+      setBuildingsData(buildingsName);
+
       const buildings = data.map(
         async (data) =>
-          await execute(`building/${residence.id}`, { name: data.name }),
+          execute(`building/${residence.id}`, { name: data.name }),
       );
 
       const apiResponse = await Promise.all(buildings);
       const buildingResponse = apiResponse.map((value) => value.data);
 
-      setBuildings(buildingResponse);
+      setBuildings(buildingResponse as ESW.Building[]);
     } catch (error) {
-      throw new Error(error);
+      console.log('from updateBuilding', error);
     } finally {
       closeModal();
       reset();
@@ -175,7 +180,7 @@ export default function AddProperty(): JSX.Element {
   const onRemoveBuilding = async (id: string) => {
     await execute(`building/${id}`, null, { method: 'DELETE' });
     const response = await execute('building', null, { method: 'GET' });
-    const buildingList = await response.data;
+    const buildingList = await response.data as ESW.Building[];
     setBuildings(buildingList);
   };
 
@@ -196,6 +201,12 @@ export default function AddProperty(): JSX.Element {
       router.replace('/login');
     }
 
+    const getBuildings = async () => {
+      const response = await execute('building', null, { method: 'GET' });
+      const buildingList = await response.data as ESW.Building[];
+      setBuildings(buildingList);
+    };
+
     if (error) {      
       const errorMessage = error.response.data.message;
       if (errorMessage.includes(formik.values.name)) {
@@ -203,6 +214,12 @@ export default function AddProperty(): JSX.Element {
         setTimeout(() => {
           formik.setErrors({ name: '' });
         }, 3000);
+      }
+
+      if (buildingsData.includes(errorMessage.split(' ')[0]) && !dataError.building) {
+        setDataError({ building: errorMessage });
+        setTimeout(() => setDataError({ building: '' }), 3000);
+        getBuildings();
       }
     }
   }, [router, user, error]);
@@ -247,12 +264,13 @@ export default function AddProperty(): JSX.Element {
         {/* Set apartments */}
 
         <HeadingTable title="Set apartments" />
+        {!buildings.length && <p>Still no buildings</p>}
         <PropertyTable
           headings={['Building ID', 'Apartments', 'Actions']}
           data={filterBuildingById(buildings)}
           onRemoveBuilding={onRemoveBuilding}
         />
-        <F.Feedback text={errors.building} />
+        <F.Feedback text={dataError?.building} />
         <Button mode="plus" onClick={() => openModal()} />
         <PropertyModal
           title="Add building"

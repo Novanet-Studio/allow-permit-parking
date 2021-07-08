@@ -3,6 +3,7 @@ import Head from 'next/head';
 
 import UserContext, { UserContextProvider } from '../contexts/user';
 import LoginScreen from '../modules/auth/screens/Login';
+import Loader from '../components/Loader';
 
 import type { NextComponentType } from 'next';
 
@@ -21,7 +22,25 @@ function App({
   return (
     <UserContextProvider>
       <UserContext.Consumer>
-        {({ user }) => {
+        {({ user, isLoading }) => {
+
+          if (isLoading) {
+            return (
+              <>
+                <Head>
+                  <meta
+                    name="viewport"
+                    content="initial-scale=1.0, width=device-width"
+                  />
+                  <title>ESW | Loading...</title>
+                </Head>
+                <div className="container">
+                  <Loader />
+                </div>
+              </>
+            )
+          }
+
           if (user === null) {
             return (
               <>

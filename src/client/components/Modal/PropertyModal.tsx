@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-import Button from '../Button';
 import Modal from './Modal';
+import useGenerateInput from '../../hooks/use-generate-input';
 
 import addIcon from '../../assets/images/app_icon_add.svg';
 import deleteIcon from '../../assets/images/app_icon_delete.svg';
 
-import type { MouseEvent, ChangeEvent } from 'react';
+import type { MouseEvent } from 'react';
 
 type Props = {
   title: string;
@@ -20,39 +20,17 @@ type BuildingForm = {
   name: string;
 };
 
-const initialState = [
-  {
-    name: '',
-  },
-];
-
 export default function PropertyModal({
   inputLabel,
   ...props
 }: Props): JSX.Element {
-  const [inputs, setInputs] = useState<BuildingForm[]>(initialState);
-
-  const handleInputChange = (
-    e: ChangeEvent<HTMLInputElement>,
-    index: number,
-  ) => {
-    const { name, value } = e.currentTarget;
-    const list = [...inputs];
-    list[index][name] = value;
-    setInputs(list);
-  };
-
-  const handleRemove = (index: number) => {
-    const list = [...inputs];
-    list.splice(index, 1);
-    setInputs(list);
-  };
-
-  const handleClick = () => {
-    setInputs([...inputs, { name: '' }]);
-  };
-
-  const reset = () => setInputs(initialState);
+  const {
+    inputs,
+    handleInputChange,
+    handleClick,
+    handleRemove,
+    reset,
+  } = useGenerateInput<BuildingForm>({ name: '' });
 
   return (
     <Modal
@@ -64,7 +42,7 @@ export default function PropertyModal({
       showButtons={true}
     >
       <form className="form form--one-column">
-        {inputs.map((input, index) => (
+        {inputs?.map((input, index) => (
           <div className="form__group form__group--full" key={index}>
             <label className="form__label">{inputLabel}</label>
             <div style={{ display: 'flex' }}>
@@ -81,11 +59,7 @@ export default function PropertyModal({
                   type="button"
                   onClick={() => handleRemove(index)}
                 >
-                  <img
-                    className="plus__icon"
-                    src={deleteIcon}
-                    alt="add icon"
-                  />
+                  <img className="plus__icon" src={deleteIcon} alt="add icon" />
                 </button>
               )}
             </div>
