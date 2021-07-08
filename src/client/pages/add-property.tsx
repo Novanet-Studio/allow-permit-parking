@@ -52,7 +52,6 @@ export default function AddProperty(): JSX.Element {
   );
   const { user } = useUser();
   const { openModal, isOpenModal, closeModal } = useModal(false);
-  const { response: property, createProperty } = useProperty<ESW.Residence>();
   const {
     inputs,
     // handleInputChange,
@@ -70,7 +69,7 @@ export default function AddProperty(): JSX.Element {
     },
     onSubmit: async (values: PropertyForm) => {
       const response = await execute('/residence', { ...values });
-      const data = await response.data;
+      const data = await response?.data;
       setResidence(data);
     },
   });
@@ -115,7 +114,6 @@ export default function AddProperty(): JSX.Element {
   };  
 
   const handleOnAddProperty = async () => {
-    const residence = property;
     const parkingSlotsArr = [];
     const continuosRange = range({
       starting: Number(startingContinous.current.value),
@@ -197,8 +195,6 @@ export default function AddProperty(): JSX.Element {
     if (!residence || !buildings) {
       return;
     }
-
-    console.log({ buildings });
 
     const buildingsFiltred = buildings.filter(
       (building) => building.residenceId === residence.id,

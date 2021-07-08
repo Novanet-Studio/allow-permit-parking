@@ -12,8 +12,7 @@ const getConfig = (ssl = false) => {
   const basic = {
     type: 'postgres',
     host: PGHOST,
-    port: PGPORT,
-    url: DATABASE_URL,
+    port: +PGPORT,
     username: POSTGRES_USER,
     password: POSTGRES_PASSWORD,
     database: POSTGRES_DB,
@@ -33,9 +32,10 @@ const getConfig = (ssl = false) => {
       }
     }
   }
+
+  return basic;
 }
 
 const config = getConfig(NODE_ENV === 'production');
 
-
-export default { ...config };
+export default config;
