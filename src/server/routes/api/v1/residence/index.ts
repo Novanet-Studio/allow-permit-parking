@@ -69,6 +69,10 @@ export default function (
           return httpResponse.badRequestMessage(reply, error.message, error);
         }
 
+        if (error.detail.includes('already exists')) {
+          return httpResponse.badRequestMessage(reply, `${request.body.name} already exists`, error);
+        }
+
         return httpResponse.internalServerError(reply, error);
       }
     },
