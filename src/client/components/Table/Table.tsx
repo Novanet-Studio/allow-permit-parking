@@ -32,7 +32,14 @@ export default function Table<T>({ headings, data }: Props): JSX.Element {
     });
   };
 
-  const handleClickDetails = () => {};
+  const handleClickDetails = (id: string) => {
+    router.push({
+      pathname: '/property-manage',
+      query: {
+        residenceId: id,
+      },
+    });
+  };
 
   if (!data || !data.length) {
     return null;
@@ -50,7 +57,7 @@ export default function Table<T>({ headings, data }: Props): JSX.Element {
       {data.length === 1
         ? data.map((item, index) => (
             <ul className="table__row" key={index}>
-              <li className="table__data">{item.systemType}</li>
+              {item.systemType && <li className="table__data">{item.systemType}</li>}
               <li className="table__data">{item.apartments}</li>
               <li className="table__data">{item.parkingSpaces}</li>
               <li className="table__data">{item.permitSpaces}</li>
@@ -68,7 +75,7 @@ export default function Table<T>({ headings, data }: Props): JSX.Element {
               <li className="table__data">
                 <button
                   className="button button--table button--orange"
-                  onClick={() => handleClickDetails}
+                  onClick={() => handleClickDetails(item.id)}
                 >
                   <img
                     className="button__icon"
