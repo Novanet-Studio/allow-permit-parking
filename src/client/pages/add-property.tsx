@@ -201,7 +201,6 @@ export default function AddProperty(): JSX.Element {
       if (errorMessage.includes(formik.values.name)) {
         formik.setErrors({ name: 'Property already exists' });
         setTimeout(() => {
-          console.log('remove property name error');
           formik.setErrors({ name: '' });
         }, 3000);
       }

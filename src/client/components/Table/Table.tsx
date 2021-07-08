@@ -38,12 +38,12 @@ export default function Table<T>({ headings, data }: Props): JSX.Element {
           <li className="table__data">{item.parkingSpaces}</li>
           <li className="table__data">{item.visitorSpaces}</li>
           <li className="table__data">
-            <a href="">
+            <a>
               <button className="button button--table button--orange">
                 <img className="button__icon" src={listIcon} alt="list icon" />
               </button>
             </a>
-            <a href="">
+            <a>
               <button className="button button--table button--green">
                 <img
                   className="button__icon"
