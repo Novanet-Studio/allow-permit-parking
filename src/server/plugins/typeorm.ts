@@ -24,25 +24,46 @@ export default fp(
         POSTGRES_DB = 'esw',
         POSTGRES_USER = 'esw',
         POSTGRES_PASSWORD = 'esw',
+        NODE_ENV = 'development',
+        DATABASE_URL,
       } = process.env;
+ 
+      const getConfig = (ssl = false) => {
+        const basic = {
+          type: 'postgres',
+          host: PGHOST,
+          url: DATABASE_URL,
+          port: +PGPORT,
+          username: POSTGRES_USER,
+          password: POSTGRES_PASSWORD,
+          database: POSTGRES_DB,
+          entities: [
+            User,
+            Residence,
+            Building,
+            ParkingLot,
+            ParkingSlot,
+            Driver,
+            Vehicle,
+          ],
+        }
 
-      const connection = await createConnection({
-        type: 'postgres',
-        host: PGHOST,
-        port: +PGPORT,
-        username: POSTGRES_USER,
-        password: POSTGRES_PASSWORD,
-        database: POSTGRES_DB,
-        entities: [
-          User,
-          Residence,
-          Building,
-          ParkingLot,
-          ParkingSlot,
-          Driver,
-          Vehicle,
-        ],
-      });
+        if (ssl) {
+          return {
+            ...basic,
+            ssl: {
+              rejectUnauthorized: false
+            }
+          }
+        }
+
+        return basic;
+      }
+
+      const connectionString = getConfig(NODE_ENV === 'production');
+      
+      // @ts-ignore
+      const connection = await createConnection(connectionString);
 
       fastify.decorate('typeorm', connection);
 

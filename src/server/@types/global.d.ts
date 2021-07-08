@@ -6,6 +6,7 @@ declare namespace NodeJS {
     ADMIN_PASSWORD?: string;
     APPLICATION_DOMAIN: string;
     COOKIE_SIGNATURE: string;
+    DATABASE_URL?: string;
     JWT_TOKEN_COOKIE_NAME: string;
     JWT_REFRESH_TOKEN_COOKIE_NAME: string;
     JWT_EXPIRATION: string;
