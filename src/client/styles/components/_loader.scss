@@ -1,3 +1,11 @@
+.loader-container {
+  display: flex;
+  width: 80em;
+  min-height: 100vh;
+  align-items: center;
+  margin: 0 auto;
+}
+
 .loader,
 .loader:before,
 .loader:after {

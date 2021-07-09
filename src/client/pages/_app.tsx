@@ -34,7 +34,7 @@ function App({
                   />
                   <title>ESW | Loading...</title>
                 </Head>
-                <div className="container">
+                <div className="loader-container">
                   <Loader />
                 </div>
               </>

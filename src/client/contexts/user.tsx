@@ -40,37 +40,41 @@ export function UserContextProvider({ children }: Props): JSX.Element {
 
   const login = async (email: string, password: string): Promise<void> => {
     setIsLoading(true);
-    const loginResponse = await axios.post(
-      'api/auth/login',
-      {},
-      {
-        auth: {
-          username: email,
-          password,
+    try {
+      const loginResponse = await axios.post(
+        'api/auth/login',
+        {},
+        {
+          auth: {
+            username: email,
+            password,
+          },
         },
-      },
-    );
-
-    if (loginResponse.status === 200) {
-      const meResponse = await axios.get('api/v1/me');
-
-      if (meResponse.status === 200) {
-        const user = meResponse.data;
-
-        openSession(user);
+      );
+  
+      if (loginResponse.status === 200) {
+        const meResponse = await axios.get('api/v1/me');
+  
+        if (meResponse.status === 200) {
+          const user = meResponse.data;
+  
+          openSession(user);
+          setIsLoading(false);
+  
+          return;
+        }
+  
         setIsLoading(false);
-
-        return;
+        // TODO: Implement a dedicated error
+        throw new Error('Failed to fetch user data');
       }
-
+  
       setIsLoading(false);
       // TODO: Implement a dedicated error
-      throw new Error('Failed to fetch user data');
+      throw new Error('Failed to authenticate');
+    } catch (error) {
+      // setIsLoading(false);
     }
-
-    setIsLoading(false);
-    // TODO: Implement a dedicated error
-    throw new Error('Failed to authenticate');
   };
 
   const resumeSession = async (): Promise<void> => {
@@ -82,15 +86,22 @@ export function UserContextProvider({ children }: Props): JSX.Element {
 
     setIsLoading(true);
 
-    const refreshTokenResponse = await axios.post('api/auth/refresh');
+    try {
+      const refreshTokenResponse = await axios.post('api/auth/refresh');
 
-    if (refreshTokenResponse.status === 200) {
-      const meResponse = await axios.get('api/v1/me');
+      if (refreshTokenResponse.status === 200) {
+        const meResponse = await axios.get('api/v1/me');
 
-      if (meResponse.status === 200) {
-        const user = meResponse.data;
+        if (meResponse.status === 200) {
+          const user = meResponse.data;
 
-        openSession(user);
+          openSession(user);
+          setIsLoading(false);
+
+          return;
+        }
+
+        closeSession();
         setIsLoading(false);
 
         return;
@@ -98,12 +109,12 @@ export function UserContextProvider({ children }: Props): JSX.Element {
 
       closeSession();
       setIsLoading(false);
-
-      return;
+    } catch (error) {
+      if (error.response.status === 500 ) {
+        closeSession();
+        setIsLoading(false);
+      }
     }
-
-    closeSession();
-    setIsLoading(false);
   };
 
   return (
