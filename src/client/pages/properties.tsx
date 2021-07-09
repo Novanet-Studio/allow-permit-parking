@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 
+import Loader from '../components/Loader';
 import Dashboard from '../components/DashboardLayout';
 import Breadcrumb from '../components/Breadcrumb';
 import Subheader from '../components/Subheader';
@@ -25,7 +26,7 @@ type RequestType =
 
 export default function Properties(): JSX.Element {
   const [tableData, setTableData] = useState(null);
-  const { execute } = useRequest<RequestType>(Request);
+  const { execute, isLoading } = useRequest<RequestType>(Request);
 
   useEffect(() => {
     const getProperties = async () => {
@@ -96,14 +97,15 @@ export default function Properties(): JSX.Element {
       >
         <button className="button button--gray">
           <Link href="/add-property">
-            <a className="button--gray__link">
-              Add a property
-            </a>
+            <a className="button--gray__link">Add a property</a>
           </Link>
         </button>
       </Subheader>
-
-      <Table headings={tableHeadings} data={tableData} mode="action" />
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <Table headings={tableHeadings} data={tableData} mode="action" />
+      )}
     </Dashboard>
   );
 }

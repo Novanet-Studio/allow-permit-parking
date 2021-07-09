@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 
+import Loader from '../components/Loader';
 import Dashboard from '../components/DashboardLayout';
 import Breadcrumb from '../components/Breadcrumb';
 import Subheader from '../components/Subheader';
@@ -27,7 +28,7 @@ export default function PropertyManage(): JSX.Element {
   const router = useRouter();
   const [residence, setResidence] = useState(null);
   const [tableData, setTableData] = useState(null);
-  const { execute } = useRequest<RequestType>(Request);
+  const { execute, isLoading } = useRequest<RequestType>(Request);
 
   useEffect(() => {
     const getProperties = async () => {
@@ -74,7 +75,7 @@ export default function PropertyManage(): JSX.Element {
     };
 
     getProperties();
-  }, []);  
+  }, []);
 
   const tableHeadings = [
     'Apartments',
@@ -92,10 +93,16 @@ export default function PropertyManage(): JSX.Element {
         icon={propertiesIcon}
         iconAlt="properties icon"
       />
-      <div className="heading-table heading-table--top">
-        <h2 className="heading-table__title">{residence?.name}</h2>
-      </div>
-      <Table headings={tableHeadings} data={tableData} />
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <>
+          <div className="heading-table heading-table--top">
+            <h2 className="heading-table__title">{residence?.name}</h2>
+          </div>
+          <Table headings={tableHeadings} data={tableData} />
+        </>
+      )}
     </Dashboard>
   );
 }

@@ -17,6 +17,7 @@ import deleteIcon from '../assets/images/app_icon_delete.svg';
 
 import type { AxiosRequestConfig } from 'axios';
 import type { ESW } from '../../@types/esw';
+import Loader from '../components/Loader';
 
 const Request: AxiosRequestConfig = {
   method: 'GET',
@@ -37,7 +38,7 @@ export default function PropertyDetail(): JSX.Element {
   const [buildings, setBuildings] = useState<ESW.Building[]>(null);
   const [parkingSlots, setParkingSlots] = useState<ESW.ParkingSlot[]>(null);
   const [tableData, setTableData] = useState(null);
-  const { execute } = useRequest<RequestType>(Request);
+  const { execute, isLoading } = useRequest<RequestType>(Request);
   const {
     isOpenModal: isOpenModalRename,
     openModal: openModalRename,
@@ -217,82 +218,86 @@ export default function PropertyDetail(): JSX.Element {
         icon={propertiesIcon}
         iconAlt="properties icon"
       />
-      <div className="detail">
-        <div className="detail__left">
-          <h2 className="detail__title">{residence?.name}</h2>
-          <p className="detail__text">ESW parking properties</p>
-          <p className="detail__subtext">You can update fields</p>
-          <ul className="detail__menu">
-            <li className="detail__links" onClick={openModalRename}>
-              Rename property
-            </li>
-            {/* <li className="detail__links">Update property map</li> */}
-            <li className="detail__links" onClick={openModalParkingLots}>
-              Update apartments
-            </li>
-            {/* <li className="detail__links">Manage Parking</li> */}
-            {/* <li className="detail__links">Update status</li> */}
-            {/* <li className="detail__links">Propety manager access</li> */}
-            {/* <li className="detail__links">Reset property</li> */}
-            <li className="detail__links" onClick={deleteProperty}>
-              Delete property
-            </li>
-          </ul>
-          <Modal
-            title="Rename property"
-            isOpenModal={isOpenModalRename}
-            closeModal={closeModalRename}
-            onUpdate={onRenameProperty}
-            showButtons
-          >
-            <div className="form__group">
-              <label className="form__label">Property name</label>
-              <input className="form__input" ref={inputRename} type="text" />
-            </div>
-          </Modal>
-          <Modal
-            title="Rename property"
-            isOpenModal={isOpenModalApartments}
-            closeModal={closeModalApartments}
-            onUpdate={onUpdateApartments}
-            showButtons
-          >
-            {inputs?.map((input, index) => (
-              <div className="form__group form__group--full" key={index}>
-                <label className="form__label">Rename apartment</label>
-                <div style={{ display: 'flex' }}>
-                  <input
-                    name="name"
-                    className="form__input"
-                    type="text"
-                    value={input.name}
-                    onChange={(e) => handleInputChange(e, index)}
-                  />
-                  {inputs.length !== 1 && (
-                    <button
-                      className="button button--plus"
-                      type="button"
-                      onClick={() => {
-                        removeParkingSlot(input.id);
-                        handleRemove(index);
-                      }}
-                    >
-                      <img
-                        className="plus__icon"
-                        src={deleteIcon}
-                        alt="add icon"
-                      />
-                    </button>
-                  )}
-                </div>
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <div className="detail">
+          <div className="detail__left">
+            <h2 className="detail__title">{residence?.name}</h2>
+            <p className="detail__text">ESW parking properties</p>
+            <p className="detail__subtext">You can update fields</p>
+            <ul className="detail__menu">
+              <li className="detail__links" onClick={openModalRename}>
+                Rename property
+              </li>
+              {/* <li className="detail__links">Update property map</li> */}
+              <li className="detail__links" onClick={openModalParkingLots}>
+                Update apartments
+              </li>
+              {/* <li className="detail__links">Manage Parking</li> */}
+              {/* <li className="detail__links">Update status</li> */}
+              {/* <li className="detail__links">Propety manager access</li> */}
+              {/* <li className="detail__links">Reset property</li> */}
+              <li className="detail__links" onClick={deleteProperty}>
+                Delete property
+              </li>
+            </ul>
+            <Modal
+              title="Rename property"
+              isOpenModal={isOpenModalRename}
+              closeModal={closeModalRename}
+              onUpdate={onRenameProperty}
+              showButtons
+            >
+              <div className="form__group">
+                <label className="form__label">Property name</label>
+                <input className="form__input" ref={inputRename} type="text" />
               </div>
-            ))}
-          </Modal>
+            </Modal>
+            <Modal
+              title="Rename property"
+              isOpenModal={isOpenModalApartments}
+              closeModal={closeModalApartments}
+              onUpdate={onUpdateApartments}
+              showButtons
+            >
+              {inputs?.map((input, index) => (
+                <div className="form__group form__group--full" key={index}>
+                  <label className="form__label">Rename apartment</label>
+                  <div style={{ display: 'flex' }}>
+                    <input
+                      name="name"
+                      className="form__input"
+                      type="text"
+                      value={input.name}
+                      onChange={(e) => handleInputChange(e, index)}
+                    />
+                    {inputs.length !== 1 && (
+                      <button
+                        className="button button--plus"
+                        type="button"
+                        onClick={() => {
+                          removeParkingSlot(input.id);
+                          handleRemove(index);
+                        }}
+                      >
+                        <img
+                          className="plus__icon"
+                          src={deleteIcon}
+                          alt="add icon"
+                        />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </Modal>
+          </div>
+          <div className="detail__right">
+            <Table headings={tableHeadings} data={tableData} />
+          </div>
         </div>
-        <div className="detail__right">
-          <Table headings={tableHeadings} data={tableData} />
-        </div>
-      </div>
+      )}
     </Dashboard>
   );
 }
