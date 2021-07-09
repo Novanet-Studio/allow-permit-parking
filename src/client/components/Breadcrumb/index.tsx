@@ -10,7 +10,7 @@ type Props = {
 export default function Breadcrumb({ text = 'Back' }: Props): JSX.Element {
   const router = useRouter();
 
-  const handleBack = () => router.replace('/');
+  const handleBack = () => router.back();
 
   return (
     <div className="breadcrumb" onClick={handleBack}>

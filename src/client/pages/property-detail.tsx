@@ -71,19 +71,22 @@ export default function PropertyDetail(): JSX.Element {
       const apartments = response[1] as ESW.ParkingLot[];
       const parkingSlots = response[2] as ESW.ParkingSlot[];
 
-      updateInputs(apartments);
-
       const buildingId = buildings
         .filter((building) => building.residenceId === residence.id)
         .map((building) => building.id);
 
-      const totalApartments = apartments.filter((apartment) =>
+      const filterApartments = apartments.filter((apartment) =>
         buildingId.includes(apartment.buildingId),
-      ).length;
+      );
 
-      const totalParkingSpaces = parkingSlots.filter(
+      const filterParkingSpaces = parkingSlots.filter(
         (slot) => slot.residenceId === residence.id,
-      ).length;
+      );
+
+      const totalApartments = filterApartments.length;
+      const totalParkingSpaces = filterParkingSpaces.length;
+        
+      updateInputs(filterApartments);
 
       setTableData([
         {
@@ -128,14 +131,15 @@ export default function PropertyDetail(): JSX.Element {
   };
 
   const onUpdateApartments = async () => {
-    const inputsPromise = inputs.map(async (input) =>
-      await execute(
-        `api/v1/parking/lots/${input.id}`,
-        { name: input.name },
-        { method: 'PUT' },
-      ),
+    const inputsPromise = inputs.map(
+      async (input) =>
+        await execute(
+          `api/v1/parking/lots/${input.id}`,
+          { name: input.name },
+          { method: 'PUT' },
+        ),
     );
-    
+
     await Promise.all(inputsPromise);
     closeModalApartments();
   };
