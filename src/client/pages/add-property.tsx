@@ -225,7 +225,7 @@ export default function AddProperty(): JSX.Element {
   }, [router, user, error]);
 
   if (isAdded) {
-    return <Success isSuccess={true} />;
+    return <Success isSuccess={true} content="Property added successfully" />;
   }
 
   return (

@@ -103,7 +103,7 @@ export default function Properties(): JSX.Element {
         </button>
       </Subheader>
 
-      <Table headings={tableHeadings} data={tableData} />
+      <Table headings={tableHeadings} data={tableData} mode="action" />
     </Dashboard>
   );
 }

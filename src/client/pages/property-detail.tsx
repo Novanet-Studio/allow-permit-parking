@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 
+import Success from '../components/Success';
 import Dashboard from '../components/DashboardLayout';
 import Breadcrumb from '../components/Breadcrumb';
 import Subheader from '../components/Subheader';
@@ -9,13 +10,13 @@ import { Modal } from '../components/Modal';
 
 import useModal from '../hooks/use-modal';
 import useRequest from '../hooks/use-request';
+import useGenerateInput from '../hooks/use-generate-input';
 
 import propertiesIcon from '../assets/images/app_icon_properties.svg';
-// import deleteIcon from '../assets/images/app_icon_delete.svg';
+import deleteIcon from '../assets/images/app_icon_delete.svg';
 
 import type { AxiosRequestConfig } from 'axios';
 import type { ESW } from '../../@types/esw';
-import useGenerateInput from '../hooks/use-generate-input';
 
 const Request: AxiosRequestConfig = {
   method: 'GET',
@@ -25,12 +26,16 @@ type RequestType =
   | ESW.Residence[]
   | ESW.Building[]
   | ESW.ParkingLot[]
-  | ESW.ParkingSlot[];
+  | ESW.ParkingSlot[]
+  | ESW.ParkingSlot;
 
 export default function PropertyDetail(): JSX.Element {
   const router = useRouter();
   const inputRename = useRef<HTMLInputElement>();
+  const [isSuccess, setIsSuccess] = useState(false);
   const [residence, setResidence] = useState(null);
+  const [buildings, setBuildings] = useState<ESW.Building[]>(null);
+  const [parkingSlots, setParkingSlots] = useState<ESW.ParkingSlot[]>(null);
   const [tableData, setTableData] = useState(null);
   const { execute } = useRequest<RequestType>(Request);
   const {
@@ -85,8 +90,12 @@ export default function PropertyDetail(): JSX.Element {
 
       const totalApartments = filterApartments.length;
       const totalParkingSpaces = filterParkingSpaces.length;
-        
+
+      setBuildings(
+        buildings.filter((building) => building.residenceId === residence.id),
+      );
       updateInputs(filterApartments);
+      setParkingSlots(filterParkingSpaces);
 
       setTableData([
         {
@@ -152,6 +161,54 @@ export default function PropertyDetail(): JSX.Element {
     openModalApartments();
   };
 
+  const removeParkingSlot = async (id: string) => {
+    const result = await execute(`/api/v1/parking/lots/${id}`, null, {
+      method: 'DELETE',
+    });
+    const response = result.data as ESW.ParkingSlot;
+
+    updateInputs(inputs.filter((input) => input.id !== response.id));
+  };
+
+  const deleteProperty = async () => {
+    const apartments = inputs;
+    buildings.map(
+      async (building) =>
+        await execute(`api/v1/building/${building.id}`, null, {
+          method: 'DELETE',
+        }),
+    );
+    apartments.map(
+      async (apartment) =>
+        await execute(`api/v1/parking/lots/${apartment.id}`, null, {
+          method: 'DELETE',
+        }),
+    );
+    parkingSlots.map(
+      async (parkingSlot) =>
+        await execute(`api/v1/parking/slots/${parkingSlot.id}`, null, {
+          method: 'DELETE',
+        }),
+    );
+
+    const deleted = await execute(`api/v1/residence/${residence.id}`, null, {
+      method: 'DELETE',
+    });
+
+    if (deleted.status === 200) {
+      setIsSuccess(true);
+    }
+  };
+
+  if (isSuccess) {
+    return (
+      <Success
+        isSuccess={isSuccess}
+        content={`Property "${residence.name}" was deleted successfully`}
+      />
+    );
+  }
+
   return (
     <Dashboard showMsg={false}>
       <Breadcrumb />
@@ -177,6 +234,9 @@ export default function PropertyDetail(): JSX.Element {
             {/* <li className="detail__links">Update status</li> */}
             {/* <li className="detail__links">Propety manager access</li> */}
             {/* <li className="detail__links">Reset property</li> */}
+            <li className="detail__links" onClick={deleteProperty}>
+              Delete property
+            </li>
           </ul>
           <Modal
             title="Rename property"
@@ -208,11 +268,14 @@ export default function PropertyDetail(): JSX.Element {
                     value={input.name}
                     onChange={(e) => handleInputChange(e, index)}
                   />
-                  {/*inputs.length !== 1 && (
+                  {inputs.length !== 1 && (
                     <button
                       className="button button--plus"
                       type="button"
-                      onClick={() => handleRemove(index)}
+                      onClick={() => {
+                        removeParkingSlot(input.id);
+                        handleRemove(index);
+                      }}
                     >
                       <img
                         className="plus__icon"
@@ -220,7 +283,7 @@ export default function PropertyDetail(): JSX.Element {
                         alt="add icon"
                       />
                     </button>
-                  )*/}
+                  )}
                 </div>
               </div>
             ))}

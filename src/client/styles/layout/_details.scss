@@ -37,8 +37,14 @@
   }
 
   &__links {
+    cursor: pointer;
     padding: 0.5em 0;
     font-size: 0.9rem;
+    transition: all ease .3;
+
+    &:hover {
+      opacity: .7;
+    }
   }
 
   &__right {

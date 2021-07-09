@@ -18,9 +18,10 @@ type TableData = {
 type Props = {
   headings: string[];
   data: TableData[];
+  mode?: 'action' | 'none';
 };
 
-export default function Table<T>({ headings, data }: Props): JSX.Element {
+export default function Table<T>({ headings, data, mode = 'none' }: Props): JSX.Element {
   const router = useRouter();
 
   const handleClickEdit = (id: string) => {
@@ -54,7 +55,7 @@ export default function Table<T>({ headings, data }: Props): JSX.Element {
           </li>
         ))}
       </ul>
-      {data.length === 1
+      {data.length === 1 && mode == 'none'
         ? data.map((item, index) => (
             <ul className="table__row" key={index}>
               {item.systemType && <li className="table__data">{item.systemType}</li>}
@@ -65,7 +66,7 @@ export default function Table<T>({ headings, data }: Props): JSX.Element {
               <li className="table__data">{item.visitorSpaces}</li>
             </ul>
           ))
-        : data.map((item, index) => (
+        : mode === 'action' && data.map((item, index) => (
             <ul className="table__row" key={index}>
               <li className="table__data">{item.propertyName}</li>
               <li className="table__data">{item.systemType}</li>

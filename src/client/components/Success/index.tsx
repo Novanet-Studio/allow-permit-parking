@@ -1,13 +1,22 @@
 import React, { useEffect } from 'react';
+
+import useModal from '../../hooks/use-modal';
 import { useRouter } from 'next/router';
 import { Modal } from '../Modal';
-import useModal from '../../hooks/use-modal';
 
 type Props = {
   isSuccess: boolean;
+  content: string;
+  title?: string;
+  time?: number;
 };
 
-export default function Success({ isSuccess }: Props): JSX.Element {
+export default function Success({
+  isSuccess,
+  content,
+  title = '¡Success!',
+  time = 3000,
+}: Props): JSX.Element {
   const { isOpenModal, openModal, closeModal } = useModal(false);
   const router = useRouter();
 
@@ -17,7 +26,7 @@ export default function Success({ isSuccess }: Props): JSX.Element {
       setTimeout(() => {
         closeModal();
         router.replace('/');
-      }, 5000);
+      }, time);
     }
   }, [isSuccess]);
 
@@ -26,9 +35,9 @@ export default function Success({ isSuccess }: Props): JSX.Element {
       isOpenModal={isOpenModal}
       closeModal={closeModal}
       onUpdate={() => {}}
-      title="¡Success!"
+      title={title}
     >
-      <p>Property added successfully</p>
+      <p>{content}</p>
     </Modal>
   );
 }
