@@ -1,7 +1,7 @@
 import React from 'react';
 
 import TableHeading from './TableHeading';
-import { PropertyModal } from '../Modal';
+import { EditModal } from '../Modal';
 
 import useModal from '../../hooks/use-modal';
 import useRequest from '../../hooks/use-request';
@@ -11,10 +11,11 @@ import type { ESW } from '../../../@types/esw';
 type Props = {
   headings: string[];
   data: ESW.Building[];
+  residenceId: string;
   onRemoveBuilding: (id: string) => void;
 };
 
-export default function PropertyTable({ headings, data, onRemoveBuilding }: Props): JSX.Element {
+export default function EditTable({ headings, data, residenceId, onRemoveBuilding }: Props): JSX.Element {
   const {
     isOpenById,
     openModalById,
@@ -22,21 +23,23 @@ export default function PropertyTable({ headings, data, onRemoveBuilding }: Prop
     closeAllModals,
   } = useModal(false);
   const { execute } = useRequest<ESW.ParkingLot>({
-    method: 'POST',
+    method: 'DELETE',
   });
 
-  const onAddApartments = async (
+  const onRemoveApartments = async (
     e,
     data: [{ name: string }],
     buildingId: string,
   ) => {
     try {
       const parkingLots = data.map(
-        async (data) =>
-          await execute(`api/v1/parking/lots/${buildingId}`, { name: data.name }),
+        async () =>
+          await execute(`api/v1/parking/lots/${buildingId}`),
       );      
 
-      await Promise.all(parkingLots);
+      const response = await Promise.all(parkingLots);
+
+      console.log(response);
 
       closeAllModals();
     } catch (error) {
@@ -61,7 +64,7 @@ export default function PropertyTable({ headings, data, onRemoveBuilding }: Prop
               className="button button--table"
               onClick={() => openModalById(building.id)}
             >
-              <a className="button__link">Add</a>
+              <a className="button__link">Update</a>
             </button>
           </li>
           <li className="table__data">
@@ -73,15 +76,16 @@ export default function PropertyTable({ headings, data, onRemoveBuilding }: Prop
               &times;
             </button>
           </li>
-          <PropertyModal
-            title={`Add apartments for ${building.name}`}
-            helperText="To add an apartment click on the ⊕ icon"
+          <EditModal
+            title={`Update apartments for ${building.name}`}
             inputLabel="Apartment name"
             isOpenModal={isOpenById[building.id]}
             closeModal={() => closeModalById(building.id)}
             onUpdate={(e, data: [{ name: string }]) =>
-              onAddApartments(e, data, building.id)
+              onRemoveApartments(e, data, building.id)
             }
+            residenceId={residenceId}
+            buildingId={building.id}
             key={Date.now()}
           />
         </ul>

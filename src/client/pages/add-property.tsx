@@ -25,6 +25,8 @@ import deleteIcon from '../assets/images/app_icon_delete.svg';
 
 import type { AxiosRequestConfig } from 'axios';
 import type { ESW } from '../../@types/esw';
+import useError from '../hooks/use-error';
+import filterBuildingById from '../utils/filterBuildingById';
 
 type RequestType = ESW.Building | ESW.Building[];
 
@@ -36,6 +38,7 @@ type PropertyForm = {
 type DataError = {
   property?: string;
   building?: string;
+  parkingSlot?: string;
 }
 
 const AppRequestConfig: AxiosRequestConfig = {
@@ -45,15 +48,20 @@ const AppRequestConfig: AxiosRequestConfig = {
 
 export default function AddProperty(): JSX.Element {
   const [isAdded, setIsAdded] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [buildings, setBuildings] = useState<ESW.Building[]>([]);
   const [buildingsData, setBuildingsData] = useState([]);
-  const [dataError, setDataError] = useState<DataError | null>(null);
+  const [dataError, setDataError] = useError<DataError>({
+    building: '',
+    property: '',
+    parkingSlot: '',
+  });
   const [residence, setResidence] = useState(null);
   const div = useRef<HTMLDivElement>();
   const startingContinous = useRef<HTMLInputElement>();
   const endingContinous = useRef<HTMLInputElement>();
   const router = useRouter();
-  const { execute, isLoading, error } = useRequest<RequestType>(
+  const { execute, error } = useRequest<RequestType>(
     AppRequestConfig,
   );
   const { user } = useUser();
@@ -107,10 +115,24 @@ export default function AddProperty(): JSX.Element {
   };
 
   const handleOnAddProperty = async () => {
+    setIsLoading(true);
     const parkingSlotsArr = [];
+    const startingValue = +startingContinous.current.value; 
+    const endingValue = +endingContinous.current.value;
+
+    if (!startingValue && !endingValue) {
+      setDataError({
+        parkingSlot: 'You must to provide a starting number and ending number.',
+      });
+
+      setIsLoading(false);
+
+      return;
+    }
+
     const continuosRange = range({
-      starting: Number(startingContinous.current.value),
-      ending: Number(endingContinous.current.value),
+      starting: startingValue,
+      ending: endingValue,
     });
     const children = [
       ...((div.current.children as unknown) as HTMLDivElement[]),
@@ -175,6 +197,8 @@ export default function AddProperty(): JSX.Element {
     if (parkingSlotResponse.length) {
       setIsAdded(true);
     }
+
+    setIsLoading(false);
   };
 
   const onRemoveBuilding = async (id: string) => {
@@ -182,18 +206,6 @@ export default function AddProperty(): JSX.Element {
     const response = await execute('building', null, { method: 'GET' });
     const buildingList = await response.data as ESW.Building[];
     setBuildings(buildingList);
-  };
-
-  const filterBuildingById = (buildings: ESW.Building[]) => {
-    if (!residence || !buildings) {
-      return;
-    }
-
-    const buildingsFiltred = buildings.filter(
-      (building) => building.residenceId === residence.id,
-    );
-
-    return buildingsFiltred;
   };
 
   useEffect(() => {
@@ -210,13 +222,16 @@ export default function AddProperty(): JSX.Element {
     if (error) {      
       const errorMessage = error.response.data.message;
       if (errorMessage.includes(formik.values.name)) {
-        formik.setErrors({ name: 'Property already exists' });
-        setTimeout(() => {
-          formik.setErrors({ name: '' });
-        }, 3000);
+        setDataError({
+          property: 'Property already exists',
+        });
+        // formik.setErrors({ name: 'Property already exists' });
+        // setTimeout(() => {
+        //   formik.setErrors({ name: '' });
+        // }, 3000);
       }
 
-      if (buildingsData.includes(errorMessage.split(' ')[0]) && !dataError.building) {
+      if (buildingsData.includes(errorMessage.split(' ')[0]) && !dataError?.building) {
         setDataError({ building: errorMessage });
         setTimeout(() => setDataError({ building: '' }), 3000);
         getBuildings();
@@ -249,7 +264,7 @@ export default function AddProperty(): JSX.Element {
               onBlur={formik.handleBlur}
               onFocus={formik.handleBlur}
             />
-            <F.Feedback text={formik.errors.name} />
+            <F.Feedback text={dataError?.property} />
           </F.Group>
           <F.Group>
             <Dropdown
@@ -267,14 +282,16 @@ export default function AddProperty(): JSX.Element {
         {!buildings.length && <p>Still no buildings</p>}
         <PropertyTable
           headings={['Building ID', 'Apartments', 'Actions']}
-          data={filterBuildingById(buildings)}
+          data={filterBuildingById(residence.id, buildings)}
           onRemoveBuilding={onRemoveBuilding}
         />
         <F.Feedback text={dataError?.building} />
         <Button mode="plus" onClick={() => openModal()} />
+        
         <PropertyModal
           title="Add building"
           inputLabel="Building name"
+          helperText="To add a building click on the ⊕ icon"
           isOpenModal={isOpenModal}
           closeModal={closeModal}
           onUpdate={onUpdateBuilding}
@@ -340,8 +357,9 @@ export default function AddProperty(): JSX.Element {
 
         <Button mode="plus" onClick={handleClick} />
         <div className="table__button-wrapper">
+          <F.Feedback text={dataError?.parkingSlot} />
           <Button mode="top" onClick={handleOnAddProperty}>
-            {isLoading ? 'Adding property' : 'Add property'}
+            {isLoading ? '...Adding property' : 'Add property'}
           </Button>
         </div>
       </WrapperGrid>

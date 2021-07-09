@@ -67,7 +67,7 @@ export default function LoginScreen(): JSX.Element {
             <F.Feedback text={formik.errors.password} />
           </F.Group>
           <F.Group>
-            <Button type="submit">Login</Button>
+            <Button type="submit" mode="big">Login</Button>
           </F.Group>
         </form>
       </main>

@@ -12,6 +12,7 @@ type Props = {
   title: string;
   inputLabel: string;
   isOpenModal: boolean;
+  helperText?: string;
   onUpdate(event: MouseEvent<HTMLSpanElement>, data?: unknown): void;
   closeModal: () => void;
 };
@@ -22,6 +23,7 @@ type BuildingForm = {
 
 export default function PropertyModal({
   inputLabel,
+  helperText = 'Click to add input',
   ...props
 }: Props): JSX.Element {
   const {
@@ -41,6 +43,7 @@ export default function PropertyModal({
       }}
       showButtons={true}
     >
+      {inputs === null && <p style={{ textAlign: 'center' }}>{helperText}</p>}
       <form className="form form--one-column">
         {inputs?.map((input, index) => (
           <div className="form__group form__group--full" key={index}>

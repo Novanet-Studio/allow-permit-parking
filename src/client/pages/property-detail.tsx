@@ -5,7 +5,7 @@ import Success from '../components/Success';
 import Dashboard from '../components/DashboardLayout';
 import Breadcrumb from '../components/Breadcrumb';
 import Subheader from '../components/Subheader';
-import { Table } from '../components/Table';
+import { EditTable, Table } from '../components/Table';
 import { Modal } from '../components/Modal';
 
 import useModal from '../hooks/use-modal';
@@ -18,6 +18,7 @@ import deleteIcon from '../assets/images/app_icon_delete.svg';
 import type { AxiosRequestConfig } from 'axios';
 import type { ESW } from '../../@types/esw';
 import Loader from '../components/Loader';
+import filterBuildingById from '../utils/filterBuildingById';
 
 const Request: AxiosRequestConfig = {
   method: 'GET',
@@ -34,6 +35,7 @@ export default function PropertyDetail(): JSX.Element {
   const router = useRouter();
   const inputRename = useRef<HTMLInputElement>();
   const [isSuccess, setIsSuccess] = useState(false);
+  const [confirm, setConfirm] = useState(false);
   const [residence, setResidence] = useState(null);
   const [buildings, setBuildings] = useState<ESW.Building[]>(null);
   const [parkingSlots, setParkingSlots] = useState<ESW.ParkingSlot[]>(null);
@@ -50,6 +52,11 @@ export default function PropertyDetail(): JSX.Element {
     closeModal: closeModalApartments,
   } = useModal(false);
   const {
+    isOpenModal: isOpenConfirmationModal,
+    openModal: openConfirmationModal,
+    closeModal: closeConfirmationModal,
+  } = useModal(false);
+  const {
     inputs,
     handleInputChange,
     handleRemove,
@@ -58,6 +65,10 @@ export default function PropertyDetail(): JSX.Element {
 
   useEffect(() => {
     const getProperties = async () => {
+      if (confirm) {
+        return;
+      }
+
       const apiResponse = await Promise.all([
         execute(`api/v1/residence/${router.query.residenceId}`),
         execute('api/v1/building'),
@@ -92,9 +103,11 @@ export default function PropertyDetail(): JSX.Element {
       const totalApartments = filterApartments.length;
       const totalParkingSpaces = filterParkingSpaces.length;
 
-      setBuildings(
-        buildings.filter((building) => building.residenceId === residence.id),
+      const filterBuildings = buildings.filter(
+        (building) => building.residenceId === residence.id,
       );
+
+      setBuildings(filterBuildings);
       updateInputs(filterApartments);
       setParkingSlots(filterParkingSpaces);
 
@@ -111,8 +124,43 @@ export default function PropertyDetail(): JSX.Element {
       ]);
     };
 
+    const removeProperty = async () => {
+      const apartments = inputs;
+      console.log('Remove Done!');
+      buildings.map(
+        async (building) =>
+          await execute(`api/v1/building/${building.id}`, null, {
+            method: 'DELETE',
+          }),
+      );
+      apartments.map(
+        async (apartment) =>
+          await execute(`api/v1/parking/lots/${apartment.id}`, null, {
+            method: 'DELETE',
+          }),
+      );
+      parkingSlots.map(
+        async (parkingSlot) =>
+          await execute(`api/v1/parking/slots/${parkingSlot.id}`, null, {
+            method: 'DELETE',
+          }),
+      );
+
+      const deleted = await execute(`api/v1/residence/${residence.id}`, null, {
+        method: 'DELETE',
+      });
+
+      if (deleted.status === 200) {
+        setIsSuccess(true);
+      }
+    };
+
+    if (confirm) {
+      removeProperty();
+    }
+
     getProperties();
-  }, []);
+  }, [confirm]);
 
   const tableHeadings = [
     'System type',
@@ -155,50 +203,33 @@ export default function PropertyDetail(): JSX.Element {
   };
 
   const openModalParkingLots = () => {
-    if (!inputs.length) {
+    if (!buildings.length) {
       return;
     }
-
     openModalApartments();
   };
 
-  const removeParkingSlot = async (id: string) => {
-    const result = await execute(`/api/v1/parking/lots/${id}`, null, {
-      method: 'DELETE',
-    });
-    const response = result.data as ESW.ParkingSlot;
-
-    updateInputs(inputs.filter((input) => input.id !== response.id));
-  };
-
-  const deleteProperty = async () => {
+  const onRemoveBuilding = async (id: string) => {
     const apartments = inputs;
-    buildings.map(
-      async (building) =>
-        await execute(`api/v1/building/${building.id}`, null, {
-          method: 'DELETE',
-        }),
-    );
-    apartments.map(
-      async (apartment) =>
-        await execute(`api/v1/parking/lots/${apartment.id}`, null, {
-          method: 'DELETE',
-        }),
-    );
-    parkingSlots.map(
-      async (parkingSlot) =>
-        await execute(`api/v1/parking/slots/${parkingSlot.id}`, null, {
+
+    await apartments.map(
+      async (aparment) =>
+        await execute(`api/v1/parking/lots/${aparment.id}`, null, {
           method: 'DELETE',
         }),
     );
 
-    const deleted = await execute(`api/v1/residence/${residence.id}`, null, {
-      method: 'DELETE',
-    });
+    await execute(`api/v1/building/${id}`, null, { method: 'DELETE' });
+    const response = await execute('api/v1/building', null, { method: 'GET' });
+    const buildings = (await response.data) as ESW.Building[];
+    const buildingFilter = buildings.filter((building) => building.residenceId === residence.id);
 
-    if (deleted.status === 200) {
-      setIsSuccess(true);
+    if (!buildingFilter.length) {
+      closeModalApartments();
+      return;
     }
+
+    setBuildings(buildingFilter);
   };
 
   if (isSuccess) {
@@ -238,7 +269,12 @@ export default function PropertyDetail(): JSX.Element {
               {/* <li className="detail__links">Update status</li> */}
               {/* <li className="detail__links">Propety manager access</li> */}
               {/* <li className="detail__links">Reset property</li> */}
-              <li className="detail__links" onClick={deleteProperty}>
+              <li
+                className="detail__links"
+                onClick={() => {
+                  openConfirmationModal();
+                }}
+              >
                 Delete property
               </li>
             </ul>
@@ -255,42 +291,54 @@ export default function PropertyDetail(): JSX.Element {
               </div>
             </Modal>
             <Modal
-              title="Rename property"
+              title="Update apartments"
               isOpenModal={isOpenModalApartments}
               closeModal={closeModalApartments}
               onUpdate={onUpdateApartments}
               showButtons
             >
-              {inputs?.map((input, index) => (
-                <div className="form__group form__group--full" key={index}>
-                  <label className="form__label">Rename apartment</label>
-                  <div style={{ display: 'flex' }}>
-                    <input
-                      name="name"
-                      className="form__input"
-                      type="text"
-                      value={input.name}
-                      onChange={(e) => handleInputChange(e, index)}
-                    />
-                    {inputs.length !== 1 && (
-                      <button
-                        className="button button--plus"
-                        type="button"
-                        onClick={() => {
-                          removeParkingSlot(input.id);
-                          handleRemove(index);
-                        }}
-                      >
-                        <img
-                          className="plus__icon"
-                          src={deleteIcon}
-                          alt="add icon"
-                        />
-                      </button>
-                    )}
-                  </div>
+              {buildings?.length && (
+                <EditTable
+                  headings={['Building ID', 'Apartments', 'Actions']}
+                  data={buildings}
+                  residenceId={residence.id}
+                  onRemoveBuilding={onRemoveBuilding}
+                />
+              )}
+            </Modal>
+            <Modal
+              title="Property delete confirmation"
+              isOpenModal={isOpenConfirmationModal}
+              closeModal={closeConfirmationModal}
+              onUpdate={() => {}}
+            >
+              <div className="form__group form__group--full">
+                <p style={{ textAlign: 'center' }}>
+                  Are you sure to delete <b>{residence?.name}</b>?
+                </p>
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                  <button
+                    style={{
+                      marginRight: '1em',
+                    }}
+                    className="button button--red"
+                    type="button"
+                    onClick={() => {
+                      setConfirm(false);
+                      closeConfirmationModal();
+                    }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="button"
+                    type="button"
+                    onClick={() => setConfirm(true)}
+                  >
+                    Confirm
+                  </button>
                 </div>
-              ))}
+              </div>
             </Modal>
           </div>
           <div className="detail__right">
