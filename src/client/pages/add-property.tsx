@@ -282,7 +282,7 @@ export default function AddProperty(): JSX.Element {
         {!buildings.length && <p>Still no buildings</p>}
         <PropertyTable
           headings={['Building ID', 'Apartments', 'Actions']}
-          data={filterBuildingById(residence.id, buildings)}
+          data={filterBuildingById(residence?.id, buildings)}
           onRemoveBuilding={onRemoveBuilding}
         />
         <F.Feedback text={dataError?.building} />
