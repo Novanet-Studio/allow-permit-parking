@@ -100,6 +100,7 @@ create a new `.env` file for your environment variable during development.
 | `POSTGRES_DB`                   | PostgreSQL database name                                                                                                                                                                                                                                             |
 | `POSTGRES_USER`                 | PostgreSQL database username                                                                                                                                                                                                                                         |
 | `POSTGRES_PASSWORD`             | PostgreSQL database password                                                                                                                                                                                                                                         |
+| `DATABASE_URL`             | PostgreSQL database complete uri                                                                                                                                                                                                                                         |
 
 ## Database and TypeORM
 
